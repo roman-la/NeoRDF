@@ -1,4 +1,6 @@
-package de.htw-berlin.ai;
+package de.htw.ai
+
+-berlin.ai;
 
 import static org.junit.Assert.assertTrue;
 
