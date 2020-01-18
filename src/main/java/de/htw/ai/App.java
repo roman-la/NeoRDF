@@ -1,17 +1,23 @@
 package de.htw.ai;
 
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
-public class App
-{
-    public static void main( String[] args )
-    {
-        CliConfiguration configuration = new CliConfiguration();
+public class App {
+    public static void main(String[] args) {
+        Options options = new Options();
+
+        options.addOption(Option.builder("name")
+                .required(false)
+                .hasArg(false)
+                .numberOfArgs(1)
+                .optionalArg(false)
+                .desc("")
+                .build());
 
         try {
-            configuration.parseArgs(args);
+            new DefaultParser().parse(options, args);
         } catch (ParseException e) {
-            configuration.printHelp();
+            new HelpFormatter().printHelp("NeoRDF", options);
         }
     }
 }
