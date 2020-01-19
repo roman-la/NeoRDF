@@ -7,17 +7,21 @@ import org.neo4j.graphdb.*;
 import java.io.File;
 import java.util.Map;
 
-public class GraphDatabase {
+import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
+
+/**
+ * @see "github.com/neo4j/neo4j-documentation/blob/4.0/embedded-examples/src/main/java/org/neo4j/examples/EmbeddedNeo4j.java"
+ */
+public class EmbeddedNeo4jDatabase {
 
     private DatabaseManagementService managementService;
     private GraphDatabaseService databaseService;
 
-
-    public GraphDatabase(File directory, String pathToConfig, String databaseName) {
-        // TODO: Handle more database values like cache, etc
-        managementService = new DatabaseManagementServiceBuilder(directory).loadPropertiesFromFile(pathToConfig).build();
-        databaseService = managementService.database(databaseName);
-        registerShutdownHook();
+    public EmbeddedNeo4jDatabase(File directory) {
+        // TODO: Handle database values like cache, etc
+        managementService = new DatabaseManagementServiceBuilder(directory).build();
+        databaseService = managementService.database(DEFAULT_DATABASE_NAME);
+        registerShutdownHook(managementService);
     }
 
     public Node createNode(Map<String, Object> nodeProperties) {
@@ -48,7 +52,7 @@ public class GraphDatabase {
         return relationship;
     }
 
-    private void registerShutdownHook() {
+    private void registerShutdownHook(final DatabaseManagementService managementService) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
