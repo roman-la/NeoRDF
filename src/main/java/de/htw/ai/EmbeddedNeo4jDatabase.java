@@ -27,8 +27,9 @@ public class EmbeddedNeo4jDatabase {
     public Node createNode(Map<String, Object> nodeProperties) {
         Transaction tx = databaseService.beginTx();
 
-        // Create node and set its properties
+        // Create a node and set its label and properties
         Node node = tx.createNode();
+        node.addLabel(Label.label((String) nodeProperties.get("type")));
         for (Map.Entry<String, Object> entry : nodeProperties.entrySet()) {
             node.setProperty(entry.getKey(), entry.getValue());
         }
@@ -41,10 +42,11 @@ public class EmbeddedNeo4jDatabase {
     public Relationship setRelationship(Node firstNode, Node secondNode, Map<String, Object> relationshipProperties) {
         Transaction tx = databaseService.beginTx();
 
-        // Create relationship between first and second node and set its properties
+        // Create a relationship between first and second node and set its type and properties
         Relationship relationship = firstNode.createRelationshipTo(secondNode, (RelationshipType) relationshipProperties.get("type"));
         for (Map.Entry<String, Object> entry : relationshipProperties.entrySet()) {
-            relationship.setProperty(entry.getKey(), entry.getValue());
+            if (!entry.getKey().equals("type"))
+                relationship.setProperty(entry.getKey(), entry.getValue());
         }
 
         tx.commit();
