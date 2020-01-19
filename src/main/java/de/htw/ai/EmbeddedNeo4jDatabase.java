@@ -25,13 +25,16 @@ public class EmbeddedNeo4jDatabase {
     }
 
     public Node createNode(Map<String, Object> nodeProperties) {
+        if (!validateProperties(nodeProperties))
+            return null;
+
         Transaction tx = databaseService.beginTx();
 
         // Create a node and set its label and properties
-        Node node = tx.createNode();
-        node.addLabel(Label.label((String) nodeProperties.get("type")));
+        Node node = tx.createNode(Label.label((String) nodeProperties.get("type")));
         for (Map.Entry<String, Object> entry : nodeProperties.entrySet()) {
-            node.setProperty(entry.getKey(), entry.getValue());
+            if (!entry.getKey().equals("type"))
+                node.setProperty(entry.getKey(), entry.getValue());
         }
 
         tx.commit();
@@ -40,6 +43,9 @@ public class EmbeddedNeo4jDatabase {
     }
 
     public Relationship setRelationship(Node firstNode, Node secondNode, Map<String, Object> relationshipProperties) {
+        if (!validateProperties(relationshipProperties))
+            return null;
+
         Transaction tx = databaseService.beginTx();
 
         // Create a relationship between first and second node and set its type and properties
@@ -52,6 +58,23 @@ public class EmbeddedNeo4jDatabase {
         tx.commit();
 
         return relationship;
+    }
+
+    public ResourceIterator<Node> findNodes(Label label, Map<String, Object> nodeProperties) {
+        return databaseService.beginTx().findNodes(label, nodeProperties);
+    }
+
+    public Result executeQuery(String query) {
+        return databaseService.beginTx().execute(query);
+    }
+
+    private boolean validateProperties(Map<String, Object> properties) {
+        if (!(properties.get("type") instanceof String))
+            return false;
+
+        // Maybe check if all values are valid types (see neo4j.com/docs/java-reference/current/java-embedded/property-values/)
+
+        return true;
     }
 
     private void registerShutdownHook(final DatabaseManagementService managementService) {
