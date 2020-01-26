@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 
-public class RDFImport {
+public class RdfIO {
 
     public static Collection<Statement> readRDF(String input, String baseIri, RDFFormat format) throws IOException {
         RDFParser rdfParser = Rio.createParser(format);
