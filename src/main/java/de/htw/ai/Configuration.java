@@ -2,29 +2,38 @@ package de.htw.ai;
 
 import org.apache.commons.cli.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
 public class Configuration {
 
     private Options options;
+    private Properties properties;
 
     public Configuration() {
+        properties = new Properties();
+
         options = new Options();
 
-        options.addOption(Option.builder("name")
+        options.addOption(Option.builder("config")
                 .required(false)
-                .hasArg(false)
+                .hasArg(true)
                 .numberOfArgs(1)
                 .optionalArg(false)
-                .desc("")
+                .desc("Path to config file")
                 .build());
     }
 
-    public boolean parse(String[] args) {
-        try {
-            new DefaultParser().parse(options, args);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
+    public void parse(String[] args) throws ParseException, IOException {
+        CommandLine commandLine = new DefaultParser().parse(options, args);
+        String configPath = commandLine.getOptionValue("config");
+        properties.load(new ByteArrayInputStream(configPath.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    public String getConfigValue(String key) {
+        return properties.getProperty(key);
     }
 
     public void printHelp() {
