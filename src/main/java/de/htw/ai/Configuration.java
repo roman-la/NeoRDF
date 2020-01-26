@@ -1,6 +1,7 @@
 package de.htw.ai;
 
 import org.apache.commons.cli.*;
+import scala.util.control.Exception;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +29,14 @@ public class Configuration {
 
     public void parse(String[] args) throws ParseException, IOException {
         CommandLine commandLine = new DefaultParser().parse(options, args);
-        String configPath = commandLine.getOptionValue("config");
+
+        String configPath;
+
+        if (commandLine.hasOption("config"))
+            configPath = commandLine.getOptionValue("config");
+        else
+            configPath = "/config.txt";
+        
         properties.load(new ByteArrayInputStream(configPath.getBytes(StandardCharsets.UTF_8)));
     }
 
