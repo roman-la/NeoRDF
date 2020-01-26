@@ -7,9 +7,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-@Path("/test")
+@Path("/rest")
 public class RestApi {
 
     private Server jettyHttpServer;
@@ -43,9 +45,9 @@ public class RestApi {
     }
 
     @GET
-    @Path("asd")
+    @Path("cypher")
     @Produces(MediaType.TEXT_PLAIN)
-    public String get() {
-        return "test";
+    public Response executeCypherQuery(@QueryParam("query") String cypherQuery) {
+        return Response.status(Response.Status.OK).entity(App.database.executeQuery(cypherQuery).resultAsString()).build();
     }
 }
