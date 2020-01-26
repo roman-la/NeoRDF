@@ -1,33 +1,45 @@
 package de.htw.ai;
 
-import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.Collection;
 
 public class RDFImport {
 
-    public Collection<Statement> readRDF(String input, String baseIri, RDFFormat format) throws IOException {
-        Reader reader = new StringReader(input);
-
+    public static Collection<Statement> readRDF(String input, String baseIri, RDFFormat format) throws IOException {
         RDFParser rdfParser = Rio.createParser(format);
 
-        Model model = new LinkedHashModel();
+        StatementCollector statementCollector = new StatementCollector(new LinkedHashModel());
 
-        StatementCollector coll = new StatementCollector(model);
+        rdfParser.setRDFHandler(statementCollector);
 
-        rdfParser.setRDFHandler(coll);
+        rdfParser.parse(new StringReader(input), baseIri);
 
-        rdfParser.parse(reader, baseIri);
+        return statementCollector.getStatements();
+    }
 
-        return coll.getStatements();
+    public static String writeRDF(Collection<Statement> statements, RDFFormat format) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        RDFWriter rdfWriter = Rio.createWriter(format, outputStream);
+
+        rdfWriter.startRDF();
+
+        for (Statement statement : statements) {
+            rdfWriter.handleStatement(statement);
+        }
+
+        rdfWriter.endRDF();
+
+        return outputStream.toString();
     }
 }
