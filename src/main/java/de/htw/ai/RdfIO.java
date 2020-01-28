@@ -15,14 +15,14 @@ import java.util.Collection;
 
 public class RdfIO {
 
-    public static Collection<Statement> stringToRdf(String input, String baseIri, RDFFormat format) throws IOException {
+    public static Collection<Statement> stringToRdf(String input, RDFFormat format) throws IOException {
         RDFParser rdfParser = Rio.createParser(format);
 
         StatementCollector statementCollector = new StatementCollector(new LinkedHashModel());
 
         rdfParser.setRDFHandler(statementCollector);
 
-        rdfParser.parse(new StringReader(input), baseIri);
+        rdfParser.parse(new StringReader(input), extractBaseIri(input));
 
         return statementCollector.getStatements();
     }
@@ -41,5 +41,13 @@ public class RdfIO {
         rdfWriter.endRDF();
 
         return outputStream.toString();
+    }
+
+    private static String extractBaseIri(String input) {
+        for (String line : input.split("\\r?\\n"))
+            if (line.startsWith("@base") || line.startsWith("BASE"))
+                return line.split(" ")[1];
+
+        return "";
     }
 }
