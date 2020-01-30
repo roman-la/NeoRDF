@@ -10,10 +10,10 @@ import java.util.UUID;
 public class OntologyHandler {
 
     private static OntologyHandler instance;
-    private Map<String, String> iris;
+    private Map<String, String> ontologies;
 
     private OntologyHandler() {
-        iris = new HashMap<>();
+        ontologies = new HashMap<>();
 
         try {
             loadOntologies(App.config.getConfigValue("ontologies"));
@@ -30,7 +30,7 @@ public class OntologyHandler {
     }
 
     public String getOntologyKey(String iri) {
-        for (Map.Entry<String, String> entry : iris.entrySet()) {
+        for (Map.Entry<String, String> entry : ontologies.entrySet()) {
             if (entry.getValue().equals(iri))
                 return entry.getKey();
         }
@@ -38,19 +38,23 @@ public class OntologyHandler {
         return null;
     }
 
-    public String addOntology(String iri) {
-        String randomId;
+    public void addOntology(String abbreviation, String namespace) {
+        ontologies.put(abbreviation, namespace);
+    }
+
+    public String addOntology(String namespace) {
+        String randomAbbreviation;
 
         do {
-            randomId = UUID.randomUUID().toString().substring(0, 3);
-        } while (iris.containsKey(randomId));
+            randomAbbreviation = UUID.randomUUID().toString().substring(0, 3);
+        } while (ontologies.containsKey(randomAbbreviation));
 
-        iris.put(randomId, iri);
+        ontologies.put(randomAbbreviation, namespace);
 
-        return randomId;
+        return randomAbbreviation;
     }
 
     private void loadOntologies(String path) throws IOException {
-        Files.lines(Paths.get(path)).forEach(x -> iris.put(x.split(" ")[0], x.split(" ")[1]));
+        Files.lines(Paths.get(path)).forEach(x -> ontologies.put(x.split(" ")[0], x.split(" ")[1]));
     }
 }
