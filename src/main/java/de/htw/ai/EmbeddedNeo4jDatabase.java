@@ -1,10 +1,15 @@
 package de.htw.ai;
 
+import de.htw.ai.models.NeoElement;
+import de.htw.ai.models.NeoIRI;
+import de.htw.ai.models.NeoLiteral;
+import de.htw.ai.models.NeoStatement;
 import org.neo4j.dbms.api.DatabaseManagementService;
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder;
 import org.neo4j.graphdb.*;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
@@ -21,34 +26,56 @@ public class EmbeddedNeo4jDatabase {
         // TODO: Handle database values like cache, etc
         managementService = new DatabaseManagementServiceBuilder(directory).build();
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
+
+        setConstrains();
+
         registerShutdownHook(managementService);
     }
 
-    public Node createNode(Map<String, Object> nodeProperties) {
-        if (!validateProperties(nodeProperties))
-            return null;
+    private void setConstrains() {
+        try (Transaction tx = databaseService.beginTx()) {
 
-        Transaction tx = databaseService.beginTx();
+            tx.schema()
+                    .constraintFor(Label.label("iri"))
+                    .assertPropertyIsNodeKey("iri")
+                    .create();
 
-        // Create a node and set its label and properties
-        Node node = tx.createNode(Label.label((String) nodeProperties.get("type")));
-        for (Map.Entry<String, Object> entry : nodeProperties.entrySet()) {
-            if (!entry.getKey().equals("type"))
-                node.setProperty(entry.getKey(), entry.getValue());
+            tx.commit();
         }
+    }
 
-        tx.commit();
+    public void inputStatement(NeoStatement statement) {
+        Node subjectNode = mergeNeoElement(statement.getSubject());
+        Node objectNode = mergeNeoElement(statement.getObject());
+    }
 
-        return node;
+    private Node mergeNeoElement(NeoElement element) {
+        try (Transaction tx = databaseService.beginTx()) {
+            String query;
+            Map<String, Object> properties;
+
+            if (element instanceof NeoIRI) {
+                query = "MERGE (n:iri {iri: $iri, ns: $ns, namespace: $namespace}) RETURN n";
+                properties = ((NeoIRI) element).getProperties();
+            } else if (element instanceof NeoLiteral) {
+                query = "MERGE (n:literal {value: $value}) RETURN n";
+                properties = new HashMap<String, Object>() {{
+                    put("value", ((NeoLiteral) element).getValue());
+                }};
+            } else
+                return null;
+
+            ResourceIterator<Node> resourceIterator = tx.execute(query, properties).columnAs("n");
+
+            tx.commit();
+
+            return resourceIterator.next();
+        }
     }
 
     public Relationship setRelationship(Node firstNode, Node secondNode, Map<String, Object> relationshipProperties) {
-        if (!validateProperties(relationshipProperties))
-            return null;
-
         Transaction tx = databaseService.beginTx();
 
-        // Create a relationship between first and second node and set its type and properties
         Relationship relationship = firstNode.createRelationshipTo(secondNode, (RelationshipType) relationshipProperties.get("type"));
         for (Map.Entry<String, Object> entry : relationshipProperties.entrySet()) {
             if (!entry.getKey().equals("type"))
@@ -68,21 +95,7 @@ public class EmbeddedNeo4jDatabase {
         return databaseService.beginTx().execute(query);
     }
 
-    private boolean validateProperties(Map<String, Object> properties) {
-        if (!(properties.get("type") instanceof String))
-            return false;
-
-        // Maybe check if all values are valid types (see neo4j.com/docs/java-reference/current/java-embedded/property-values/)
-
-        return true;
-    }
-
     private void registerShutdownHook(final DatabaseManagementService managementService) {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                managementService.shutdown();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(managementService::shutdown));
     }
 }
