@@ -2,42 +2,32 @@ package de.htw.ai;
 
 import org.eclipse.rdf4j.model.Statement;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
 public class RdfConverter {
-    public static Map<String, Object> StatementToNodeMap(Statement statement) {
-        Map<String, Object> node = new HashMap<>();
 
-        node.put("subject", resolveNamespace(statement.getSubject().stringValue()));
-        node.put("predicate", resolveNamespace(statement.getPredicate().stringValue()));
-        node.put("object", resolveNamespace(statement.getObject().stringValue()));
+    public static NeoStatement rdf4jStatementToNeoStatement(Statement rdf4jStatement) {
+        NeoElement subject = iriToNeoElement(rdf4jStatement.getSubject().stringValue());
+        NeoElement predicate = iriToNeoElement(rdf4jStatement.getPredicate().stringValue());
+        NeoElement object = iriToNeoElement(rdf4jStatement.getObject().stringValue());
 
-        return node;
+        return new NeoStatement(subject, predicate, object);
     }
 
-    private static String resolveNamespace(String iri) {
+    private static NeoElement iriToNeoElement(String iri) {
         if (iri.contains("/")) {
             String namespace = iri.substring(0, iri.lastIndexOf("/"));
-            String namespaceAbbreviation = OntologyHandler.getInstance().getOntologyKey(namespace);
-
-            if (namespaceAbbreviation != null)
-                return namespaceAbbreviation + ":" + iri.replace(namespace, "");
-
-            return OntologyHandler.getInstance().addOntology(namespace) + ":" + iri.replace(namespace, "");
+            String ns = resolveNamespace(namespace);
+            return new NeoIRI(iri, ns, namespace);
         }
 
-        return iri;
+        return new NeoLiteral(iri);
     }
 
-    public static Collection<Map<String, Object>> StatementsToNodeMaps(Collection<Statement> statements) {
-        Collection<Map<String, Object>> nodes = new LinkedList<>();
+    private static String resolveNamespace(String namespace) {
+        String namespaceAbbreviation = OntologyHandler.getInstance().getOntologyKey(namespace);
 
-        for (Statement statement : statements)
-            nodes.add(StatementToNodeMap(statement));
+        if (namespaceAbbreviation != null)
+            return namespaceAbbreviation;
 
-        return nodes;
+        return OntologyHandler.getInstance().addOntology(namespace);
     }
 }
