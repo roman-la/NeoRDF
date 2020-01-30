@@ -1,4 +1,4 @@
-package de.htw.ai;
+package de.htw.ai.models;
 
 public class NeoLiteral implements NeoElement {
     private Object value;

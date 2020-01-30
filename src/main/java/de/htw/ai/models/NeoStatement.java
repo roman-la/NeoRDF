@@ -1,4 +1,4 @@
-package de.htw.ai;
+package de.htw.ai.models;
 
 public class NeoStatement {
     private NeoElement subject;
