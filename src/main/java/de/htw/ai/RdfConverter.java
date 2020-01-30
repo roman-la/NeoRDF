@@ -1,5 +1,9 @@
 package de.htw.ai;
 
+import de.htw.ai.models.NeoElement;
+import de.htw.ai.models.NeoIRI;
+import de.htw.ai.models.NeoLiteral;
+import de.htw.ai.models.NeoStatement;
 import org.eclipse.rdf4j.model.Statement;
 
 public class RdfConverter {
