@@ -14,8 +14,8 @@ public class NeoIRI implements NeoElement {
         this.namespace = namespace;
     }
 
-    public Map<String, String> getProperties() {
-        return new HashMap<String, String>() {{
+    public Map<String, Object> getProperties() {
+        return new HashMap<String, Object>() {{
             put("iri", iri);
             put("ns", ns);
             put("namespace", namespace);
