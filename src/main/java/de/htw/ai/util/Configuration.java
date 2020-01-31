@@ -4,7 +4,9 @@ import org.apache.commons.cli.*;
 import scala.util.control.Exception;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
@@ -36,8 +38,14 @@ public class Configuration {
             configPath = commandLine.getOptionValue("config");
         else
             configPath = "/config.txt";
-        
-        properties.load(new ByteArrayInputStream(configPath.getBytes(StandardCharsets.UTF_8)));
+
+        loadProperties(configPath);
+    }
+
+    private void loadProperties(String configPath) throws IOException {
+        try (InputStream in = new FileInputStream(configPath)) {
+            properties.load(in);
+        }
     }
 
     public String getConfigValue(String key) {
