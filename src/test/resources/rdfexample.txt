@@ -5,9 +5,13 @@
 @prefix rel: <http://www.perceive.net/schemas/relationship/> .
 
 <#green-goblin> a foaf:Person ;
-foaf:name "Green Goblin" ;
-rel:enemyOf <#spiderman> .
+foaf:name "Green Goblin" .
 
 <#spiderman> a foaf:Person ;
 foaf:name "Spiderman", "Spinnenmann"@de ;
 rel:enemyOf <#green-goblin> .
+
+<#roman> rdf:type foaf:Person ;
+foaf:name "Roman L." .
+
+<#green-goblin> rel:enemyOf <#spiderman> .
