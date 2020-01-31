@@ -45,20 +45,22 @@ public class EmbeddedNeo4jDatabase {
     }
 
     public void inputStatement(NeoStatement statement) {
-        Node subjectNode = mergeNeoElement(statement.getSubject());
-        Node objectNode = mergeNeoElement(statement.getObject());
+        Node subjectNode = mergeNeoElementAsNode(statement.getSubject());
+        Node objectNode = mergeNeoElementAsNode(statement.getObject());
+
+        mergeNeoIriRelationship(subjectNode, (NeoIRI) statement.getPredicate(), objectNode);
     }
 
-    private Node mergeNeoElement(NeoElement element) {
+    private Node mergeNeoElementAsNode(NeoElement element) {
         try (Transaction tx = databaseService.beginTx()) {
             String query;
             Map<String, Object> properties;
 
             if (element instanceof NeoIRI) {
-                query = "MERGE (n:iri {iri: $iri, ns: $ns, namespace: $namespace}) RETURN n";
+                query = "MERGE (n:subject {iri: $iri, ns: $ns, namespace: $namespace}) RETURN n";
                 properties = ((NeoIRI) element).getProperties();
             } else if (element instanceof NeoLiteral) {
-                query = "MERGE (n:literal {value: $value}) RETURN n";
+                query = "MERGE (n:object {value: $value}) RETURN n";
                 properties = new HashMap<String, Object>() {{
                     put("value", ((NeoLiteral) element).getValue());
                 }};
@@ -73,18 +75,15 @@ public class EmbeddedNeo4jDatabase {
         }
     }
 
-    public Relationship setRelationship(Node firstNode, Node secondNode, Map<String, Object> relationshipProperties) {
-        Transaction tx = databaseService.beginTx();
+    private void mergeNeoIriRelationship(Node subjectNode, NeoIRI neoRelationship, Node objectNode) {
+        try (Transaction tx = databaseService.beginTx()) {
+            Relationship relationship = subjectNode.createRelationshipTo(objectNode, RelationshipType.withName("predicate"));
 
-        Relationship relationship = firstNode.createRelationshipTo(secondNode, (RelationshipType) relationshipProperties.get("type"));
-        for (Map.Entry<String, Object> entry : relationshipProperties.entrySet()) {
-            if (!entry.getKey().equals("type"))
+            for (Map.Entry<String, Object> entry : neoRelationship.getProperties().entrySet())
                 relationship.setProperty(entry.getKey(), entry.getValue());
+
+            tx.commit();
         }
-
-        tx.commit();
-
-        return relationship;
     }
 
     public ResourceIterator<Node> findNodes(Label label, Map<String, Object> nodeProperties) {
