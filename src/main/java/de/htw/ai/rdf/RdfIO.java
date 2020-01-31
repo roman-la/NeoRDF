@@ -1,4 +1,4 @@
-package de.htw.ai;
+package de.htw.ai.rdf;
 
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;

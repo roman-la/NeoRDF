@@ -1,4 +1,4 @@
-package de.htw.ai;
+package de.htw.ai.rdf;
 
 import de.htw.ai.models.NeoElement;
 import de.htw.ai.models.NeoIRI;

@@ -1,5 +1,8 @@
 package de.htw.ai;
 
+import de.htw.ai.db.EmbeddedNeo4jDatabase;
+import de.htw.ai.rest.RestApi;
+import de.htw.ai.util.Configuration;
 import org.apache.commons.cli.ParseException;
 
 import java.io.File;

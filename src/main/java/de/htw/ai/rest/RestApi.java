@@ -1,5 +1,6 @@
-package de.htw.ai;
+package de.htw.ai.rest;
 
+import de.htw.ai.App;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;

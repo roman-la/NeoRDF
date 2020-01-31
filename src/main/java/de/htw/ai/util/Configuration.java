@@ -1,4 +1,4 @@
-package de.htw.ai;
+package de.htw.ai.util;
 
 import org.apache.commons.cli.*;
 import scala.util.control.Exception;

@@ -1,4 +1,6 @@
-package de.htw.ai;
+package de.htw.ai.rdf;
+
+import de.htw.ai.App;
 
 import java.io.IOException;
 import java.nio.file.Files;
