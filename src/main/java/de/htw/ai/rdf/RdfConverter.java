@@ -6,6 +6,9 @@ import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
 import org.eclipse.rdf4j.model.Statement;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 public class RdfConverter {
 
     public static NeoStatement rdf4jStatementToNeoStatement(Statement rdf4jStatement) {
@@ -16,9 +19,18 @@ public class RdfConverter {
         return new NeoStatement(subject, predicate, object);
     }
 
+    public static Collection<NeoStatement> rdf4jStatementsToNeoStatements(Collection<Statement> rdf4jStatements) {
+        Collection<NeoStatement> neoStatements = new LinkedList<>();
+
+        for (Statement statement : rdf4jStatements)
+            neoStatements.add(rdf4jStatementToNeoStatement(statement));
+
+        return neoStatements;
+    }
+
     private static NeoElement iriToNeoElement(String iri) {
         if (iri.contains("/")) {
-            String namespace = iri.substring(0, iri.lastIndexOf("/"));
+            String namespace = iri.substring(0, iri.lastIndexOf("/") + 1);
             String ns = resolveNamespace(namespace);
             return new NeoIRI(iri, ns, namespace);
         }
