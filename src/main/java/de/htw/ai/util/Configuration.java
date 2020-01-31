@@ -52,6 +52,10 @@ public class Configuration {
         return properties.getProperty(key);
     }
 
+    public void setConfigValue(String key, String value) {
+        properties.put(key, value);
+    }
+
     public void printHelp() {
         new HelpFormatter().printHelp("NeoRDF", options);
     }

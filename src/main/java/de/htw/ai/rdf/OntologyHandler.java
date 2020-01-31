@@ -1,13 +1,13 @@
 package de.htw.ai.rdf;
 
 import de.htw.ai.App;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class OntologyHandler {
 
@@ -48,7 +48,7 @@ public class OntologyHandler {
         String randomAbbreviation;
 
         do {
-            randomAbbreviation = UUID.randomUUID().toString().substring(0, 3);
+            randomAbbreviation = RandomStringUtils.randomAlphabetic(4).toLowerCase();
         } while (ontologies.containsKey(randomAbbreviation));
 
         ontologies.put(randomAbbreviation, namespace);
