@@ -1,6 +1,6 @@
 package de.htw.ai;
 
-import de.htw.ai.db.EmbeddedNeo4jDatabase;
+import de.htw.ai.db.GraphDatabase;
 import de.htw.ai.rest.RestApi;
 import de.htw.ai.util.Configuration;
 import org.apache.commons.cli.ParseException;
@@ -11,7 +11,7 @@ import java.io.IOException;
 public class App {
 
     public static Configuration config;
-    public static EmbeddedNeo4jDatabase database;
+    public static GraphDatabase database;
 
     public static void main(String[] args) {
         config = new Configuration();
@@ -26,7 +26,7 @@ public class App {
             return;
         }
 
-        database = new EmbeddedNeo4jDatabase(new File("target/dbtest"));
+        //database = new GraphDatabase(new File("target/dbtest"));
 
         new RestApi().start();
     }
