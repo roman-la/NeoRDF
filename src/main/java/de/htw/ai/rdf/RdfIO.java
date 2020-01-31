@@ -15,7 +15,7 @@ import java.util.Collection;
 
 public class RdfIO {
 
-    public static Collection<Statement> stringToRdf(String input, RDFFormat format) throws IOException {
+    public static Collection<Statement> stringToStatements(String input, RDFFormat format) throws IOException {
         RDFParser rdfParser = Rio.createParser(format);
 
         StatementCollector statementCollector = new StatementCollector(new LinkedHashModel());
@@ -27,7 +27,7 @@ public class RdfIO {
         return statementCollector.getStatements();
     }
 
-    public static String rdfToString(Collection<Statement> statements, RDFFormat format) {
+    public static String statementsToString(Collection<Statement> statements, RDFFormat format) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         RDFWriter rdfWriter = Rio.createWriter(format, outputStream);

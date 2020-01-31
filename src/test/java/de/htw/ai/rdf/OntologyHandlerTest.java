@@ -2,7 +2,6 @@ package de.htw.ai.rdf;
 
 import de.htw.ai.App;
 import de.htw.ai.util.Configuration;
-import org.apache.shiro.util.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ public class OntologyHandlerTest {
         Assertions.assertEquals("rdf", OntologyHandler.getInstance().getOntologyKey("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
         Assertions.assertEquals("rdfs", OntologyHandler.getInstance().getOntologyKey("http://www.w3.org/2000/01/rdf-schema#"));
 
-        Assertions.assertEquals(null, OntologyHandler.getInstance().getOntologyKey("http://www.example.org/"));
+        Assertions.assertNull(OntologyHandler.getInstance().getOntologyKey("http://www.example.org/"));
     }
 
     @Test
@@ -34,7 +33,7 @@ public class OntologyHandlerTest {
 
         String ontologyAbbreviation = OntologyHandler.getInstance().addOntology("http://www.htw-berlin.de/");
 
-        Assertions.assertTrue(ontologyAbbreviation.length() == 4);
+        Assertions.assertEquals(4, ontologyAbbreviation.length());
 
         Assertions.assertEquals(ontologyAbbreviation, OntologyHandler.getInstance().getOntologyKey("http://www.htw-berlin.de/"));
     }
