@@ -20,14 +20,15 @@ import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAM
  */
 public class GraphDatabase {
 
+    private DatabaseManagementService managementService;
     private GraphDatabaseService databaseService;
 
     public GraphDatabase() {
         String directory = App.config.getConfigValue("dbdirectory");
-        DatabaseManagementService managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
+        managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
 
-        registerShutdownHook(managementService);
+        registerShutdownHook();
     }
 
     public void inputStatement(NeoStatement statement) {
@@ -36,6 +37,8 @@ public class GraphDatabase {
             Node objectNode = mergeNeoElementAsNode(statement.getObject(), tx);
 
             mergeNeoIriRelationship(subjectNode, (NeoIRI) statement.getPredicate(), objectNode);
+
+            tx.commit();
         }
     }
 
@@ -75,7 +78,11 @@ public class GraphDatabase {
         return databaseService.beginTx().execute(query);
     }
 
-    private void registerShutdownHook(final DatabaseManagementService managementService) {
+    public void shutdown() {
+        managementService.shutdown();
+    }
+
+    private void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(managementService::shutdown));
     }
 }
