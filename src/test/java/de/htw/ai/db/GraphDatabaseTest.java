@@ -1,6 +1,7 @@
 package de.htw.ai.db;
 
 import de.htw.ai.App;
+import de.htw.ai.models.NeoElement;
 import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
@@ -10,9 +11,16 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.neo4j.graphdb.Entity;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Result;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class GraphDatabaseTest {
 
@@ -40,7 +48,7 @@ public class GraphDatabaseTest {
 
         db = new GraphDatabase();
 
-        db.inputStatement(neoStatement1);
+        db.insertNeoStatement(neoStatement1);
         String countTest = db.executeQuery("MATCH (n) RETURN n;").resultAsString();
         Assertions.assertTrue(countTest.contains("2 rows"));
 
@@ -48,11 +56,11 @@ public class GraphDatabaseTest {
         NeoLiteral object2 = new NeoLiteral("Roman L.");
         NeoStatement neoStatement2 = new NeoStatement(subject, predicate2, object2);
 
-        db.inputStatement(neoStatement2);
+        db.insertNeoStatement(neoStatement2);
         countTest = db.executeQuery("MATCH (n) RETURN n;").resultAsString();
         Assertions.assertTrue(countTest.contains("3 rows"));
 
-        db.inputStatement(neoStatement2);
+        db.insertNeoStatement(neoStatement2);
         countTest = db.executeQuery("MATCH (n) RETURN n;").resultAsString();
         Assertions.assertTrue(countTest.contains("3 rows"));
 
@@ -69,7 +77,7 @@ public class GraphDatabaseTest {
 
         db = new GraphDatabase();
 
-        db.inputStatement(neoStatement1);
+        db.insertNeoStatement(neoStatement1);
         String countTest = db.executeQuery("MATCH (n) RETURN n;").resultAsString();
         Assertions.assertTrue(countTest.contains("2 rows"));
 
@@ -79,5 +87,36 @@ public class GraphDatabaseTest {
 
         countTest = db.executeQuery("MATCH (n) RETURN n;").resultAsString();
         Assertions.assertTrue(countTest.contains("2 rows"));
+    }
+
+    @Test
+    public void extractNeoStatementsTest() {
+        NeoIRI subject = new NeoIRI("http://example.org/#roman", "ex", "http://example.org/");
+        NeoIRI predicate = new NeoIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        NeoIRI object = new NeoIRI("http://xmlns.com/foaf/0.1/Person", "foaf", "http://xmlns.com/foaf/0.1/");
+        NeoLiteral literal = new NeoLiteral("test");
+
+        db = new GraphDatabase();
+
+        db.insertNeoStatement(new NeoStatement(subject, predicate, object));
+        db.insertNeoStatement(new NeoStatement(subject, predicate, literal));
+
+        Collection<NeoStatement> statements = db.extractNeoStatements("MATCH (s)-[p]->(o) RETURN s, p, o;");
+
+        for (NeoStatement statement : statements) {
+            subject = (NeoIRI) statement.getSubject();
+            predicate = (NeoIRI) statement.getPredicate();
+
+            Assertions.assertEquals("http://example.org/#roman", subject.getProperties().get("iri"));
+            Assertions.assertEquals("rdf", predicate.getProperties().get("ns"));
+
+            if (statement.getObject() instanceof NeoIRI) {
+                predicate = (NeoIRI) statement.getPredicate();
+                Assertions.assertEquals("rdf", predicate.getProperties().get("ns"));
+            } else if (statement.getObject() instanceof NeoLiteral) {
+                literal = (NeoLiteral) statement.getObject();
+                Assertions.assertEquals("test", literal.getValue());
+            }
+        }
     }
 }
