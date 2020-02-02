@@ -4,6 +4,7 @@ import de.htw.ai.App;
 import de.htw.ai.models.*;
 import de.htw.ai.util.Configuration;
 import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.SimpleStatement;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Map;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RdfConverterTest {
@@ -35,36 +35,22 @@ public class RdfConverterTest {
 
         Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
 
-        Assertions.assertEquals(9, neoStatements.size());
+        Assertions.assertEquals(3, neoStatements.size());
 
         for (NeoStatement s : neoStatements) {
-            NeoIRI sub = (NeoIRI) s.getSubject();
-            NeoIRI pre = (NeoIRI) s.getPredicate();
+            if (s.getSubject() instanceof NeoIRI)
+                Assertions.assertEquals("http://example.org/#roman", ((NeoIRI) s.getSubject()).getProperties().get("iri"));
 
-            System.out.println("Subject");
-            for (Map.Entry<String, Object> entry : sub.getProperties().entrySet()) {
-                System.out.println(entry.getKey() + " " + entry.getValue());
-            }
+            Assertions.assertTrue(
+                    s.getPredicate().getProperties().get("iri").equals("http://w3.org/1999/02/22-rdf-syntax-ns#type") ||
+                            s.getPredicate().getProperties().get("iri").equals("http://xmlns.com/foaf/0.1/title") ||
+                            s.getPredicate().getProperties().get("iri").equals("http://xmlns.com/foaf/0.1/name"));
 
-            System.out.println("Predicate");
-            for (Map.Entry<String, Object> entry : pre.getProperties().entrySet()) {
-                System.out.println(entry.getKey() + " " + entry.getValue());
-            }
-
-            System.out.println("Object");
             if (s.getObject() instanceof NeoIRI) {
-                NeoIRI obj = (NeoIRI) s.getObject();
-
-                for (Map.Entry<String, Object> entry : obj.getProperties().entrySet()) {
-                    System.out.println(entry.getKey() + " " + entry.getValue());
-                }
-            } else {
-                NeoLiteral obj = (NeoLiteral) s.getObject();
-
-                System.out.println("value: " + obj.getValue());
+                Assertions.assertEquals("http://xmlns.com/foaf/0.1/Person", ((NeoIRI) s.getObject()).getProperties().get("iri"));
+            } else if (s.getObject() instanceof NeoLiteral) {
+                Assertions.assertTrue(((NeoLiteral) s.getObject()).getValue().equals("Mr") || ((NeoLiteral) s.getObject()).getValue().equals("Roman L."));
             }
-
-            System.out.println("-----------------");
         }
     }
 }

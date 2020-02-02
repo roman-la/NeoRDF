@@ -68,7 +68,7 @@ public class GraphDatabase {
                 }
             }
 
-            neoStatements.add(new NeoStatement(subject, predicate, object));
+            neoStatements.add(new NeoStatement(subject, (NeoIRI) predicate, object));
         }
 
         return neoStatements;

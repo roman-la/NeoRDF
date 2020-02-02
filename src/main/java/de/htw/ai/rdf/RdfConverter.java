@@ -13,7 +13,7 @@ public class RdfConverter {
 
     public static NeoStatement rdf4jStatementToNeoStatement(Statement rdf4jStatement) {
         NeoElement subject = iriToNeoElement(rdf4jStatement.getSubject().stringValue());
-        NeoElement predicate = iriToNeoElement(rdf4jStatement.getPredicate().stringValue());
+        NeoIRI predicate = (NeoIRI) iriToNeoElement(rdf4jStatement.getPredicate().stringValue());
         NeoElement object = iriToNeoElement(rdf4jStatement.getObject().stringValue());
 
         return new NeoStatement(subject, predicate, object);

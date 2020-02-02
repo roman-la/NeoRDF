@@ -2,10 +2,10 @@ package de.htw.ai.models;
 
 public class NeoStatement {
     private NeoElement subject;
-    private NeoElement predicate;
+    private NeoIRI predicate;
     private NeoElement object;
 
-    public NeoStatement(NeoElement subject, NeoElement predicate, NeoElement object) {
+    public NeoStatement(NeoElement subject, NeoIRI predicate, NeoElement object) {
         this.subject = subject;
         this.predicate = predicate;
         this.object = object;
@@ -15,7 +15,7 @@ public class NeoStatement {
         return subject;
     }
 
-    public NeoElement getPredicate() {
+    public NeoIRI getPredicate() {
         return predicate;
     }
 
