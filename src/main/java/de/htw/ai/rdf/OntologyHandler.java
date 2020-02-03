@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class OntologyHandler {
 
@@ -73,5 +74,9 @@ public class OntologyHandler {
             System.out.println("error");
             e.printStackTrace();
         }
+    }
+
+    public String ontologiesToString() {
+        return ontologies.entrySet().stream().map(e -> e.getKey() + " " + e.getValue()).collect(Collectors.joining(System.lineSeparator()));
     }
 }

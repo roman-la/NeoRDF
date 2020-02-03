@@ -8,15 +8,19 @@ import de.htw.ai.rdf.SparqlConverter;
 import org.eclipse.rdf4j.model.Statement;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.util.Collection;
 
 @Path("/rest")
 public class RestApi {
+
+    @GET
+    @Path("/ontologies")
+    @Produces({MediaType.TEXT_PLAIN})
+    public Response getOntologies() {
+        return Response.status(Response.Status.OK).entity(App.ontologyHandler.ontologiesToString()).build();
+    }
 
     @POST
     @Path("/cypher")
