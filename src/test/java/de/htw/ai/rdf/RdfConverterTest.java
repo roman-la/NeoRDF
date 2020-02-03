@@ -4,12 +4,12 @@ import de.htw.ai.App;
 import de.htw.ai.models.*;
 import de.htw.ai.util.Configuration;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,19 +17,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RdfConverterTest {
 
     @BeforeAll
-    public void beforeAll() {
+    public static void beforeAll() {
         App.config = new Configuration();
-        App.config.setConfigValue("ontologies", getClass().getClassLoader().getResource("ontologiesexample.txt").getFile());
+        App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
     }
 
     @Test
     public void rdf4jStatementToNeoStatementTest() throws IOException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("rdfexample.txt").getPath());
+        Path path = Paths.get(new File("src/test/resources/rdfexample.txt").getAbsolutePath());
         String rdfString = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+
         Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
         Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
