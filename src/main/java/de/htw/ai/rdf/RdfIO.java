@@ -15,8 +15,13 @@ import java.util.Collection;
 
 public class RdfIO {
 
-    public static Collection<Statement> stringToStatements(String input, RDFFormat format) throws IOException {
-        RDFParser rdfParser = Rio.createParser(format);
+    public static Collection<Statement> stringToStatements(String input, String format) throws IOException {
+        RDFFormat rdfFormat = resolveRdfFormat(format);
+
+        if (rdfFormat == null)
+            return null;
+
+        RDFParser rdfParser = Rio.createParser(rdfFormat);
 
         StatementCollector statementCollector = new StatementCollector(new LinkedHashModel());
 
@@ -49,5 +54,32 @@ public class RdfIO {
                 return line.split(" ")[1];
 
         return "";
+    }
+
+    private static RDFFormat resolveRdfFormat(String format) {
+        switch (format) {
+            case "BINARY":
+                return RDFFormat.BINARY;
+            case "JSONLD":
+                return RDFFormat.JSONLD;
+            case "N3":
+                return RDFFormat.N3;
+            case "NQUADS":
+                return RDFFormat.NQUADS;
+            case "NTRIPLES":
+                return RDFFormat.NTRIPLES;
+            case "RDFJSON":
+                return RDFFormat.RDFJSON;
+            case "RDFXML":
+                return RDFFormat.RDFXML;
+            case "TRIG":
+                return RDFFormat.TRIG;
+            case "TRIX":
+                return RDFFormat.TRIX;
+            case "TURTLE":
+                return RDFFormat.TURTLE;
+        }
+
+        return null;
     }
 }
