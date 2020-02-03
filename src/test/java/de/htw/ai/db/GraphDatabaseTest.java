@@ -17,11 +17,14 @@ public class GraphDatabaseTest {
 
     private static GraphDatabase db;
 
-    @BeforeEach
-    public void beforeEach() {
+    @BeforeAll
+    public static void beforeAll() {
         App.config = new Configuration();
         App.config.setConfigValue("dbdirectory", "src/test/resources/db");
+    }
 
+    @BeforeEach
+    public void beforeEach() {
         db = new GraphDatabase();
     }
 
