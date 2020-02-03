@@ -56,13 +56,12 @@ public class SparqlConverter {
             }
         }
 
-
         Collection<String> cypherMatchClauses = new LinkedList<>();
 
         for (String whereClause : whereClauses) {
             String[] whereClauseParts = whereClause.split(" ");
             String cypherMatchClause = "(" + whereClauseParts[0] + ")";
-            cypherMatchClause += "-[:predicate {iri: " + whereClauseParts[1] + "})->";
+            cypherMatchClause += "-[:predicate {iri: \"" + whereClauseParts[1] + "\"}]->";
             cypherMatchClause += "(" + whereClauseParts[2] + ")";
 
             cypherMatchClauses.add(cypherMatchClause);
@@ -73,6 +72,7 @@ public class SparqlConverter {
         if (filterClauses.size() > 0)
             cypherQuery += "WHERE ";
 
+        //TODO: check for number or string
         for (String filterClause : filterClauses) {
             String[] filterClauseParts = filterClause.split(" ");
             cypherQuery += filterClauseParts[0] + ".value " + filterClauseParts[1] + " " + filterClauseParts[2];
