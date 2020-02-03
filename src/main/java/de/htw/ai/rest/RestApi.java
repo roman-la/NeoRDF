@@ -28,9 +28,17 @@ public class RestApi {
     @Produces(MediaType.TEXT_PLAIN)
     public Response executeCypherQuery(String query) {
         if (query == null)
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("No data given.").build();
 
-        return Response.status(Response.Status.OK).entity(App.database.executeQuery(query).resultAsString()).build();
+        String queryResult;
+
+        try {
+            queryResult = App.database.executeQuery(query).resultAsString();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error while processing query. Please refer to the log.").build();
+        }
+
+        return Response.status(Response.Status.OK).entity(queryResult).build();
     }
 
     @POST
@@ -39,11 +47,21 @@ public class RestApi {
     @Produces(MediaType.TEXT_PLAIN)
     public Response executeSparqlQuery(String query) {
         if (query == null)
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("No data given.").build();
 
-        String convertedQuery = SparqlConverter.sparqlToCypher(query);
+        String convertedQuery;
+        try {
+            convertedQuery = SparqlConverter.sparqlToCypher(query);
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error converting sparql query. Please refer to the log.").build();
+        }
 
-        String resultString = App.database.executeQuery(convertedQuery).resultAsString();
+        String resultString;
+        try {
+            resultString = App.database.executeQuery(convertedQuery).resultAsString();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error while processing query. Please refer to the log.").build();
+        }
 
         return Response.status(Response.Status.OK).entity(resultString).build();
     }
@@ -53,10 +71,35 @@ public class RestApi {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     public Response insertRdfData(String rdfData, @Context HttpHeaders headers) throws IOException {
-        Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfData, headers.getHeaderString("format"));
-        Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
+        if (rdfData == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity("No data given.").build();
 
-        App.database.insertNeoStatements(neoStatements);
+        if (headers.getHeaderString("format") == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity("No format given.").build();
+
+        Collection<Statement> rdf4jStatements;
+
+        try {
+            rdf4jStatements = RdfIO.stringToStatements(rdfData, headers.getHeaderString("format"));
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error converting statements. Please refer to the log.").build();
+        }
+
+        if (rdf4jStatements == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity("Unknown format given.").build();
+
+        Collection<NeoStatement> neoStatements;
+        try {
+            neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error converting statements. Please refer to the log.").build();
+        }
+
+        try {
+            App.database.insertNeoStatements(neoStatements);
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error while inserting data into database. Please refer to the log.").build();
+        }
 
         return Response.status(Response.Status.OK).build();
     }
