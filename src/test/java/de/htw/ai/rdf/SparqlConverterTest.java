@@ -14,8 +14,8 @@ public class SparqlConverterTest {
                 "FILTER (?price < 30.5)" + System.lineSeparator() +
                 "?x dc:title ?title . }";
 
-        String expectedCypherQuery = "MATCH (x)-[:predicate {iri: http://example.org/price})->(price)," + System.lineSeparator() +
-                "(x)-[:predicate {iri: http://purl.org/dc/elements/1.1/title})->(title)" + System.lineSeparator() +
+        String expectedCypherQuery = "MATCH (x)-[:predicate {iri: \"http://example.org/price\"}]->(price)," + System.lineSeparator() +
+                "(x)-[:predicate {iri: \"http://purl.org/dc/elements/1.1/title\"}]->(title)" + System.lineSeparator() +
                 "WHERE price.value < 30.5" + System.lineSeparator() +
                 "RETURN title, price";
 
@@ -30,8 +30,8 @@ public class SparqlConverterTest {
                 "WHERE { ?x ns:price ?price ." + System.lineSeparator() +
                 "?x dc:title ?title . }";
 
-        String expectedCypherQuery = "MATCH (x)-[:predicate {iri: http://example.org/price})->(price)," + System.lineSeparator() +
-                "(x)-[:predicate {iri: http://purl.org/dc/elements/1.1/title})->(title)" + System.lineSeparator() +
+        String expectedCypherQuery = "MATCH (x)-[:predicate {iri: \"http://example.org/price\"}]->(price)," + System.lineSeparator() +
+                "(x)-[:predicate {iri: \"http://purl.org/dc/elements/1.1/title\"}]->(title)" + System.lineSeparator() +
                 "RETURN title, price";
 
         Assertions.assertEquals(expectedCypherQuery, SparqlConverter.sparqlToCypher(sparqlQuery));
@@ -45,11 +45,9 @@ public class SparqlConverterTest {
                 "FILTER (?price < 30.5)" + System.lineSeparator() +
                 "}";
 
-        String expectedCypherQuery = "MATCH (x)-[:predicate {iri: http://example.org/price})->(price)" + System.lineSeparator() +
+        String expectedCypherQuery = "MATCH (x)-[:predicate {iri: \"http://example.org/price\"}]->(price)" + System.lineSeparator() +
                 "WHERE price.value < 30.5" + System.lineSeparator() +
                 "RETURN price";
-
-        System.out.println(SparqlConverter.sparqlToCypher((sparqlQuery)));
 
         Assertions.assertEquals(expectedCypherQuery, SparqlConverter.sparqlToCypher(sparqlQuery));
     }

@@ -7,13 +7,11 @@ import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
@@ -23,12 +21,15 @@ public class RdfConverterTest {
     public static void beforeAll() {
         App.config = new Configuration();
         App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
+
+        App.ontologyHandler = new OntologyHandler();
     }
 
     @Test
     public void rdf4jStatementToNeoStatementTest() throws IOException {
-        Path path = Paths.get(new File("src/test/resources/rdfexample.txt").getAbsolutePath());
-        String rdfString = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        String rdfString = new String(
+                Files.readAllBytes(Paths.get(new File("src/test/resources/rdfexample.txt").getAbsolutePath())),
+                StandardCharsets.UTF_8);
 
         Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
 

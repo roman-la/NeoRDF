@@ -29,7 +29,7 @@ public class RdfIOTest {
     public void stringToStatementsTest() throws IOException {
         Collection<Statement> statements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
-        Assertions.assertEquals(9, statements.size());
+        Assertions.assertEquals(3, statements.size());
 
         Assertions.assertTrue(statements.stream().anyMatch(o -> o.getSubject().stringValue().equals("http://example.org/#roman")));
     }
@@ -40,7 +40,10 @@ public class RdfIOTest {
 
         String rdfString = RdfIO.statementsToString(statements, RDFFormat.TURTLE);
 
-        Assertions.assertTrue(rdfString.contains("<http://example.org/#green-goblin> a <http://xmlns.com/foaf/0.1/Person>;"));
-        Assertions.assertTrue(rdfString.contains("<http://xmlns.com/foaf/0.1/name> \"Roman L.\" ."));
+        String expected = "\n<http://example.org/#roman> <http://w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;\n" +
+                "  <http://xmlns.com/foaf/0.1/name> \"Roman L.\";\n" +
+                "  <http://xmlns.com/foaf/0.1/title> \"Mr\" .\n";
+
+        Assertions.assertEquals(expected, rdfString);
     }
 }

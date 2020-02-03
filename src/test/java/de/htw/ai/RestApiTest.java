@@ -17,6 +17,12 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RestApiTest extends JerseyTest {
@@ -30,11 +36,14 @@ public class RestApiTest extends JerseyTest {
     public void beforeAll() throws Exception {
         super.setUp(); // junit 5 with JerseyTest
 
+        // Setup config, ontologyhandler, graphdb
         App.config = new Configuration();
         App.config.setConfigValue("dbdirectory", "src/test/resources/db");
-
+        App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
+        App.ontologyHandler = new OntologyHandler();
         App.database = new GraphDatabase();
 
+        // Add some data to db
         App.database.insertNeoStatement(new NeoStatement(
                 new NeoIRI("http://example.org/#roman", "ex", "http://example.org/"),
                 new NeoIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
@@ -55,6 +64,14 @@ public class RestApiTest extends JerseyTest {
         App.database.shutdown();
 
         FileUtils.deleteDirectory(new File("src/test/resources/db"));
+
+        // Reset ontologyhandler
+        String defaultContent = "owl http://www.w3.org/2002/07/owl#\n" +
+                "rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#\n" +
+                "rdfs http://www.w3.org/2000/01/rdf-schema#\n" +
+                "foaf http://xmlns.com/foaf/0.1/";
+
+        Files.write(Paths.get(new File("src/test/resources/ontologiesexample.txt").getAbsolutePath()), defaultContent.getBytes());
     }
 
     @Test
@@ -94,18 +111,19 @@ public class RestApiTest extends JerseyTest {
 
     @Test
     public void getOntologiesTest() {
-        App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
-        App.ontologyHandler = new OntologyHandler();
-
         Response response = target("/rest/ontologies").request(MediaType.TEXT_PLAIN).get();
 
         Assertions.assertEquals(200, response.getStatus());
 
-        String expectedString = "owl http://www.w3.org/2002/07/owl#\n" +
-                "rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#\n" +
-                "rdfs http://www.w3.org/2000/01/rdf-schema#\n" +
-                "foaf http://xmlns.com/foaf/0.1/";
+        String responseString = response.readEntity(String.class);
 
-        Assertions.assertEquals(expectedString, response.readEntity(String.class));
+        Collection<String> expectedLines = Arrays.asList("owl http://www.w3.org/2002/07/owl#",
+                "rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                "rdfs http://www.w3.org/2000/01/rdf-schema#",
+                "foaf http://xmlns.com/foaf/0.1/");
+
+        for (String expectedLine : expectedLines) {
+            Assertions.assertTrue(responseString.contains(expectedLine));
+        }
     }
 }
