@@ -17,9 +17,6 @@ import java.util.Map;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
 
-/**
- * @see "github.com/neo4j/neo4j-documentation/blob/4.0/embedded-examples/src/main/java/org/neo4j/examples/EmbeddedNeo4j.java"
- */
 public class GraphDatabase {
 
     private DatabaseManagementService managementService;
@@ -36,7 +33,7 @@ public class GraphDatabase {
             Node subjectNode = mergeNeoElementAsNode(statement.getSubject(), tx);
             Node objectNode = mergeNeoElementAsNode(statement.getObject(), tx);
 
-            mergeNeoIriRelationship(subjectNode, (NeoIRI) statement.getPredicate(), objectNode);
+            mergeNeoIriRelationship(subjectNode, statement.getPredicate(), objectNode);
 
             tx.commit();
         }
@@ -118,10 +115,6 @@ public class GraphDatabase {
 
         for (Map.Entry<String, Object> entry : neoRelationship.getProperties().entrySet())
             relationship.setProperty(entry.getKey(), entry.getValue());
-    }
-
-    public ResourceIterator<Node> findNodes(Label label, Map<String, Object> nodeProperties) {
-        return databaseService.beginTx().findNodes(label, nodeProperties);
     }
 
     public Result executeQuery(String query) {
