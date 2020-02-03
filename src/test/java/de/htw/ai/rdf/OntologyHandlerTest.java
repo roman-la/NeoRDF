@@ -14,7 +14,7 @@ public class OntologyHandlerTest {
     private static String ontologiesPath = new File("src/test/resources/ontologiesexample.txt").getAbsolutePath();
 
     @BeforeAll
-    static void beforeAll() {
+    public static void beforeAll() {
         App.config = new Configuration();
         App.config.setConfigValue("ontologies", ontologiesPath);
     }

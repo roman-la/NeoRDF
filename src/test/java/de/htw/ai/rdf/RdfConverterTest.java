@@ -4,6 +4,7 @@ import de.htw.ai.App;
 import de.htw.ai.models.*;
 import de.htw.ai.util.Configuration;
 import org.eclipse.rdf4j.model.Statement;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,21 @@ public class RdfConverterTest {
     public static void beforeAll() {
         App.config = new Configuration();
         App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
+    }
 
+    @BeforeAll
+    public static void beforeEach() {
         App.ontologyHandler = new OntologyHandler();
+    }
+
+    @AfterEach
+    public void afterEach() throws IOException {
+        String defaultContent = "owl http://www.w3.org/2002/07/owl#\n" +
+                "rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#\n" +
+                "rdfs http://www.w3.org/2000/01/rdf-schema#\n" +
+                "foaf http://xmlns.com/foaf/0.1/";
+
+        Files.write(Paths.get(new File("src/test/resources/ontologiesexample.txt").getAbsolutePath()), defaultContent.getBytes());
     }
 
     @Test
@@ -32,6 +46,8 @@ public class RdfConverterTest {
                 StandardCharsets.UTF_8);
 
         Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
+
+        Assertions.assertNotNull(rdf4jStatements);
 
         Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
 
@@ -60,6 +76,8 @@ public class RdfConverterTest {
 
         Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
+        Assertions.assertNotNull(rdf4jStatements);
+
         Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
 
         for (NeoStatement s : neoStatements) {
@@ -75,6 +93,8 @@ public class RdfConverterTest {
         String rdfString = "<http://example.org/#roman> <http://example.org/holdsValue> 12.3 .";
 
         Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
+
+        Assertions.assertNotNull(rdf4jStatements);
 
         Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
 
