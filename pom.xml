@@ -6,11 +6,10 @@
 
     <groupId>de.htw.ai</groupId>
     <artifactId>NeoRDF</artifactId>
-    <version>0.1</version>
+    <version>1.0</version>
 
     <name>NeoRDF</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+    <url>https://github.com/roman-la/NeoRDF</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +34,8 @@
             <artifactId>neo4j</artifactId>
             <version>4.0.0</version>
         </dependency>
+
+        <!-- Embedded webserver -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -49,6 +50,13 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
             <version>9.4.26.v20200117</version>
+        </dependency>
+
+        <!-- Rest Api -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.4.0-b180830.0359</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
@@ -66,11 +74,6 @@
             <version>2.30</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.4.0-b180830.0359</version>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
             <version>2.30</version>
@@ -80,13 +83,8 @@
             <artifactId>jersey-test-framework-provider-jdk-http</artifactId>
             <version>2.30</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.rdf4j</groupId>
-            <artifactId>rdf4j-rio-api</artifactId>
-            <version>3.1.0-M2</version>
-        </dependency>
-        -->
+
+        <!-- Rdf4j -->
         <dependency>
             <groupId>org.eclipse.rdf4j</groupId>
             <artifactId>rdf4j-rio-binary</artifactId>
@@ -137,7 +135,6 @@
             <artifactId>rdf4j-rio-turtle</artifactId>
             <version>3.1.0-M2</version>
         </dependency>
-
     </dependencies>
 
     <build>
