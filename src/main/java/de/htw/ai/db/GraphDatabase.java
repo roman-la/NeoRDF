@@ -44,6 +44,11 @@ public class GraphDatabase {
         }
     }
 
+    public void insertNeoStatements(Collection<NeoStatement> statements) {
+        for (NeoStatement statement : statements)
+            insertNeoStatement(statement);
+    }
+
     public Collection<NeoStatement> extractNeoStatements(String query) {
         Collection<NeoStatement> neoStatements = new LinkedList<>();
 
