@@ -1,17 +1,18 @@
 package de.htw.ai;
 
 import de.htw.ai.db.GraphDatabase;
+import de.htw.ai.rdf.OntologyHandler;
 import de.htw.ai.rest.RestApi;
 import de.htw.ai.util.Configuration;
 import org.apache.commons.cli.ParseException;
 
-import java.io.File;
 import java.io.IOException;
 
 public class App {
 
     public static Configuration config;
     public static GraphDatabase database;
+    public static OntologyHandler ontologyHandler;
 
     public static void main(String[] args) {
         config = new Configuration();

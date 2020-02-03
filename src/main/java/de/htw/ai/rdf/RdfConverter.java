@@ -1,5 +1,6 @@
 package de.htw.ai.rdf;
 
+import de.htw.ai.App;
 import de.htw.ai.models.NeoElement;
 import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
@@ -39,11 +40,11 @@ public class RdfConverter {
     }
 
     private static String resolveNamespace(String namespace) {
-        String namespaceAbbreviation = OntologyHandler.getInstance().getOntologyKey(namespace);
+        String namespaceAbbreviation = App.ontologyHandler.getOntologyKey(namespace);
 
         if (namespaceAbbreviation != null)
             return namespaceAbbreviation;
 
-        return OntologyHandler.getInstance().addOntology(namespace);
+        return App.ontologyHandler.addOntology(namespace);
     }
 }

@@ -4,7 +4,6 @@ import de.htw.ai.App;
 import de.htw.ai.models.*;
 import de.htw.ai.util.Configuration;
 import org.eclipse.rdf4j.model.Statement;
-import org.eclipse.rdf4j.model.impl.SimpleStatement;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
