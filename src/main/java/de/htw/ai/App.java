@@ -32,7 +32,11 @@ public class App {
         database = new GraphDatabase();
 
         httpServer = new HttpServer();
-        httpServer.start();
+        try {
+            httpServer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         registerShutdownHook();
     }
