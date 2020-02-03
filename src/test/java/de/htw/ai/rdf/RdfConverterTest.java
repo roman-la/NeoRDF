@@ -30,7 +30,7 @@ public class RdfConverterTest {
     public void rdf4jStatementToNeoStatementTest() throws IOException {
         Path path = Paths.get(getClass().getClassLoader().getResource("rdfexample.txt").getPath());
         String rdfString = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-        Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, RDFFormat.TURTLE);
+        Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
         Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
 

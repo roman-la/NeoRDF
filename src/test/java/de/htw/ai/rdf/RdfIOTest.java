@@ -27,7 +27,7 @@ public class RdfIOTest {
 
     @Test
     public void stringToStatementsTest() throws IOException {
-        Collection<Statement> statements = RdfIO.stringToStatements(rdfString, RDFFormat.TURTLE);
+        Collection<Statement> statements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
         Assertions.assertEquals(9, statements.size());
 
@@ -36,7 +36,7 @@ public class RdfIOTest {
 
     @Test
     public void statementsToString() throws IOException {
-        Collection<Statement> statements = RdfIO.stringToStatements(rdfString, RDFFormat.TURTLE);
+        Collection<Statement> statements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
         String rdfString = RdfIO.statementsToString(statements, RDFFormat.TURTLE);
 
