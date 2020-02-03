@@ -2,39 +2,69 @@ package de.htw.ai.rdf;
 
 import de.htw.ai.App;
 import de.htw.ai.util.Configuration;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class OntologyHandlerTest {
 
+    private static String ontologiesPath = new File("src/test/resources/ontologiesexample.txt").getAbsolutePath();
+
     @BeforeAll
-    public void beforeAll() {
+    static void beforeAll() {
         App.config = new Configuration();
-        App.config.setConfigValue("ontologies", getClass().getClassLoader().getResource("ontologiesexample.txt").getFile());
+        App.config.setConfigValue("ontologies", ontologiesPath);
+    }
+
+    @AfterEach
+    public void afterEach() throws IOException {
+        String defaultContent = "owl http://www.w3.org/2002/07/owl#\n" +
+                "rdf http://www.w3.org/1999/02/22-rdf-syntax-ns#\n" +
+                "rdfs http://www.w3.org/2000/01/rdf-schema#\n" +
+                "foaf http://xmlns.com/foaf/0.1/";
+
+        Files.write(Paths.get(ontologiesPath), defaultContent.getBytes());
     }
 
     @Test
     public void getOntologyKeyTest() {
-        Assertions.assertEquals("owl", OntologyHandler.getInstance().getOntologyKey("http://www.w3.org/2002/07/owl#"));
-        Assertions.assertEquals("rdf", OntologyHandler.getInstance().getOntologyKey("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
-        Assertions.assertEquals("rdfs", OntologyHandler.getInstance().getOntologyKey("http://www.w3.org/2000/01/rdf-schema#"));
+        OntologyHandler ontologyHandler = new OntologyHandler();
 
-        Assertions.assertNull(OntologyHandler.getInstance().getOntologyKey("http://www.example.org/"));
+        Assertions.assertEquals("owl", ontologyHandler.getOntologyKey("http://www.w3.org/2002/07/owl#"));
+        Assertions.assertEquals("rdf", ontologyHandler.getOntologyKey("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
+        Assertions.assertEquals("rdfs", ontologyHandler.getOntologyKey("http://www.w3.org/2000/01/rdf-schema#"));
+
+        Assertions.assertNull(ontologyHandler.getOntologyKey("http://www.example.org/"));
     }
 
     @Test
     public void addOntologyTest() {
-        OntologyHandler.getInstance().addOntology("ex", "http://www.example.org/");
+        OntologyHandler ontologyHandler = new OntologyHandler();
 
-        Assertions.assertEquals("ex", OntologyHandler.getInstance().getOntologyKey("http://www.example.org/"));
+        Assertions.assertNull(ontologyHandler.getOntologyKey("http://www.example.org/"));
 
-        String ontologyAbbreviation = OntologyHandler.getInstance().addOntology("http://www.htw-berlin.de/");
+        ontologyHandler.addOntology("ex", "http://www.example.org/");
+
+        Assertions.assertEquals("ex", ontologyHandler.getOntologyKey("http://www.example.org/"));
+
+        String ontologyAbbreviation = ontologyHandler.addOntology("http://www.htw-berlin.de/");
 
         Assertions.assertEquals(4, ontologyAbbreviation.length());
 
-        Assertions.assertEquals(ontologyAbbreviation, OntologyHandler.getInstance().getOntologyKey("http://www.htw-berlin.de/"));
+        Assertions.assertEquals(ontologyAbbreviation, ontologyHandler.getOntologyKey("http://www.htw-berlin.de/"));
+    }
+
+    @Test
+    public void persistOntologyTest() throws IOException {
+        OntologyHandler ontologyHandler = new OntologyHandler();
+
+        Assertions.assertNull(ontologyHandler.getOntologyKey("http://www.example.org/"));
+
+        ontologyHandler.addOntology("ex", "http://www.example.org/");
+
+        Assertions.assertTrue(Files.lines(Paths.get(ontologiesPath)).anyMatch(x -> x.equals("ex http://www.example.org/")));
     }
 }
