@@ -36,7 +36,12 @@ public class RdfConverter {
             return new NeoIRI(iri, ns, namespace);
         }
 
-        return new NeoLiteral(iri);
+        if (iri.matches("-?\\d+"))
+            return new NeoLiteral(Integer.parseInt(iri));
+        else if (iri.matches("-?\\d+\\.\\d+"))
+            return new NeoLiteral(Double.parseDouble(iri));
+        else
+            return new NeoLiteral(iri);
     }
 
     private static String resolveNamespace(String namespace) {

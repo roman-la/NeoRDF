@@ -53,4 +53,36 @@ public class RdfConverterTest {
             }
         }
     }
+
+    @Test
+    public void rdf4jStatementToNeoStatementLiteralIntTypeTest() throws IOException {
+        String rdfString = "<http://example.org/#roman> <http://example.org/holdsValue> 123 .";
+
+        Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
+
+        Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
+
+        for (NeoStatement s : neoStatements) {
+            NeoLiteral literal = (NeoLiteral) s.getObject();
+
+            Assertions.assertTrue(literal.getValue() instanceof Integer);
+            Assertions.assertEquals(123, literal.getValue());
+        }
+    }
+
+    @Test
+    public void rdf4jStatementToNeoStatementLiteralDoubleTypeTest() throws IOException {
+        String rdfString = "<http://example.org/#roman> <http://example.org/holdsValue> 12.3 .";
+
+        Collection<Statement> rdf4jStatements = RdfIO.stringToStatements(rdfString, "TURTLE");
+
+        Collection<NeoStatement> neoStatements = RdfConverter.rdf4jStatementsToNeoStatements(rdf4jStatements);
+
+        for (NeoStatement s : neoStatements) {
+            NeoLiteral literal = (NeoLiteral) s.getObject();
+
+            Assertions.assertTrue(literal.getValue() instanceof Double);
+            Assertions.assertEquals(12.3, literal.getValue());
+        }
+    }
 }
