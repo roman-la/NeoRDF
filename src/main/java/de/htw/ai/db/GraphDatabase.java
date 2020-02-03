@@ -29,8 +29,6 @@ public class GraphDatabase {
         String directory = App.config.getConfigValue("dbdirectory");
         managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
-
-        registerShutdownHook();
     }
 
     public void insertNeoStatement(NeoStatement statement) {
@@ -132,9 +130,5 @@ public class GraphDatabase {
 
     public void shutdown() {
         managementService.shutdown();
-    }
-
-    private void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(managementService::shutdown));
     }
 }
