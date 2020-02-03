@@ -7,10 +7,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
@@ -21,22 +21,25 @@ public class RdfIOTest {
 
     @BeforeAll
     public void beforeAll() throws IOException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("rdfexample.txt").getPath());
-        rdfString = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        rdfString = new String(Files.readAllBytes(Paths.get(new File("src/test/resources/rdfexample.txt").getAbsolutePath())), StandardCharsets.UTF_8);
     }
 
     @Test
     public void stringToStatementsTest() throws IOException {
         Collection<Statement> statements = RdfIO.stringToStatements(rdfString, "TURTLE");
 
+        Assertions.assertNotNull(statements);
+
         Assertions.assertEquals(3, statements.size());
 
-        Assertions.assertTrue(statements.stream().anyMatch(o -> o.getSubject().stringValue().equals("http://example.org/#roman")));
+        Assertions.assertTrue(statements.stream().allMatch(o -> o.getSubject().stringValue().equals("http://example.org/#roman")));
     }
 
     @Test
     public void statementsToString() throws IOException {
         Collection<Statement> statements = RdfIO.stringToStatements(rdfString, "TURTLE");
+
+        Assertions.assertNotNull(statements);
 
         String rdfString = RdfIO.statementsToString(statements, RDFFormat.TURTLE);
 
