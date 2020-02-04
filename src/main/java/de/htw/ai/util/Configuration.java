@@ -1,22 +1,26 @@
 package de.htw.ai.util;
 
 import org.apache.commons.cli.*;
-import scala.util.control.Exception;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class Configuration {
 
+    public boolean defaultConfig;
     private Options options;
     private Properties properties;
 
     public Configuration() {
         properties = new Properties();
+
+        properties.put("ontologies", "/de/htw/ai/ontologies.txt");
+        properties.put("dbdirectory", "/db");
+        properties.put("port", "8080");
+
+        defaultConfig = true;
 
         options = new Options();
 
@@ -32,20 +36,12 @@ public class Configuration {
     public void parse(String[] args) throws ParseException, IOException {
         CommandLine commandLine = new DefaultParser().parse(options, args);
 
-        String configPath;
-
         if (commandLine.hasOption("config"))
-            configPath = commandLine.getOptionValue("config");
-        else
-            configPath = "/config.txt";
+            try (InputStream in = new FileInputStream(commandLine.getOptionValue("config"))) {
+                properties.load(in);
 
-        loadProperties(configPath);
-    }
-
-    private void loadProperties(String configPath) throws IOException {
-        try (InputStream in = new FileInputStream(configPath)) {
-            properties.load(in);
-        }
+                defaultConfig = false;
+            }
     }
 
     public String getConfigValue(String key) {

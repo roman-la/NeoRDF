@@ -4,6 +4,7 @@ import de.htw.ai.App;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 public class HttpServer {
 
@@ -18,9 +19,9 @@ public class HttpServer {
 
         jettyHttpServer.setHandler(contextHandler);
 
-        ServletHolder jerseyServlet = contextHandler.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        ServletHolder jerseyServlet = contextHandler.addServlet(ServletContainer.class, "/*");
 
-        //jerseyServlet.setInitOrder(0); // maybe not needed, keep if problems occur
+        jerseyServlet.setInitOrder(0); // maybe not needed, keep if problems occur
 
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", RestApi.class.getCanonicalName());
     }

@@ -24,7 +24,7 @@ public class App {
             e.printStackTrace();
             return;
         } catch (ParseException e) {
-            e.printStackTrace();
+            config.printHelp();
         }
 
         ontologyHandler = new OntologyHandler();
@@ -42,11 +42,9 @@ public class App {
     }
 
     private static void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                database.shutdown();
-                httpServer.stop();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            database.shutdown();
+            httpServer.stop();
+        }));
     }
 }

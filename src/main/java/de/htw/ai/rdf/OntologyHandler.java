@@ -1,9 +1,13 @@
 package de.htw.ai.rdf;
 
 import de.htw.ai.App;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -14,12 +18,15 @@ import java.util.stream.Collectors;
 public class OntologyHandler {
 
     private Map<String, String> ontologies;
-    private String ontologyFile = App.config.getConfigValue("ontologies");
 
     public OntologyHandler() {
         ontologies = new HashMap<>();
 
-        loadOntologies(ontologyFile);
+        try {
+            loadOntologies();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getOntologyKey(String iri) {
@@ -57,21 +64,21 @@ public class OntologyHandler {
         return randomAbbreviation;
     }
 
-    private void loadOntologies(String path) {
-        try {
-            Files.lines(Paths.get(path)).forEach(x -> ontologies.put(x.split(" ")[0], x.split(" ")[1]));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void loadOntologies() throws IOException {
+        InputStream inputStream = new FileInputStream(App.config.getConfigValue("ontologies"));
+
+        String ontologiesFile = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+        for (String line : ontologiesFile.split("(\\r?\\n)+"))
+            ontologies.put(line.split(" ")[0], line.split(" ")[1]);
     }
 
     private void persistOntology(String abbreviation, String namespace) {
         String toPersist = System.lineSeparator() + abbreviation + " " + namespace;
 
         try {
-            Files.write(Paths.get(ontologyFile), toPersist.getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(App.config.getConfigValue("ontologies")), toPersist.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
-            System.out.println("error");
             e.printStackTrace();
         }
     }
