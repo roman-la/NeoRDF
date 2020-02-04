@@ -16,8 +16,8 @@ public class Configuration {
     public Configuration() {
         properties = new Properties();
 
-        properties.put("ontologies", "/de/htw/ai/ontologies.txt");
-        properties.put("dbdirectory", "/db");
+        properties.put("ontologies", System.getProperty("user.dir") + "/ontologies.txt");
+        properties.put("dbdirectory", System.getProperty("user.dir") + "/db");
         properties.put("port", "8080");
 
         defaultConfig = true;
