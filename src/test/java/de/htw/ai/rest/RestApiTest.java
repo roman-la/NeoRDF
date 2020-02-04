@@ -1,11 +1,11 @@
-package de.htw.ai;
+package de.htw.ai.rest;
 
+import de.htw.ai.App;
 import de.htw.ai.db.GraphDatabase;
 import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
 import de.htw.ai.rdf.OntologyHandler;
-import de.htw.ai.rest.RestApi;
 import de.htw.ai.util.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -17,12 +17,10 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RestApiTest extends JerseyTest {
