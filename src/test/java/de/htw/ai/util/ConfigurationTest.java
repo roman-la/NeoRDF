@@ -10,7 +10,7 @@ import java.io.IOException;
 public class ConfigurationTest {
 
     Configuration config;
-    String[] testArgs = new String[]{"-config", getClass().getClassLoader().getResource("configexample.txt").getFile()};
+    String[] testArgs = new String[]{"-config", "src/test/resources/configexample.txt"};
 
     @BeforeEach
     public void beforeEach() {
