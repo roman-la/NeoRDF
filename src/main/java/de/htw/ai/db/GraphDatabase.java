@@ -8,6 +8,8 @@ import de.htw.ai.models.NeoStatement;
 import org.neo4j.dbms.api.DatabaseManagementService;
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder;
 import org.neo4j.graphdb.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collection;
@@ -16,15 +18,21 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
+import static org.neo4j.configuration.GraphDatabaseSettings.ephemeral_lucene;
 
 public class GraphDatabase {
 
     private DatabaseManagementService managementService;
     private GraphDatabaseService databaseService;
+    private static Logger logger = LoggerFactory.getLogger(GraphDatabase.class);
 
     public GraphDatabase() {
+        logger.info("Starting embedded neo4j graph database");
+
         String directory = App.config.getConfigValue("dbdirectory");
-        managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
+        //managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
+
+        managementService = new DatabaseManagementServiceBuilder(new File(directory)).setConfig(ephemeral_lucene, false).build();
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
     }
 
@@ -106,7 +114,6 @@ public class GraphDatabase {
 
         ResourceIterator<Node> resourceIterator = tx.execute(query, properties).columnAs("n");
 
-
         return resourceIterator.next();
     }
 
@@ -122,6 +129,8 @@ public class GraphDatabase {
     }
 
     public void shutdown() {
+        logger.info("Stopping embedded neo4j graph database");
+
         managementService.shutdown();
     }
 }

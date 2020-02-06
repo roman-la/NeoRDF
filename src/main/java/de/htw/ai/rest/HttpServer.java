@@ -5,10 +5,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpServer {
 
     private Server jettyHttpServer;
+    private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     public HttpServer() {
         jettyHttpServer = new Server(Integer.parseInt(App.config.getConfigValue("port")));
@@ -27,15 +30,19 @@ public class HttpServer {
     }
 
     public void start() throws Exception {
+        logger.info("Starting embedded jetty http web server");
+
         jettyHttpServer.start();
         jettyHttpServer.join();
     }
 
     public void stop() {
+        logger.info("Stopping embedded jetty http web server");
+
         try {
             jettyHttpServer.stop();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
         jettyHttpServer.destroy();
     }

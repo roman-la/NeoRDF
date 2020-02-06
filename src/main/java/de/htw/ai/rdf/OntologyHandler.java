@@ -3,9 +3,10 @@ package de.htw.ai.rdf;
 import de.htw.ai.App;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -19,13 +20,15 @@ import java.util.stream.Collectors;
 public class OntologyHandler {
 
     private Map<String, String> ontologies;
+    private static Logger logger = LoggerFactory.getLogger(OntologyHandler.class);
 
     public OntologyHandler() {
         ontologies = new HashMap<>();
 
         try {
             loadOntologies();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            logger.error("An error occurred while loading ontologies", e);
         }
     }
 
