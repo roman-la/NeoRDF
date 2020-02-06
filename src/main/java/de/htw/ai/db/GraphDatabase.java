@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
-import static org.neo4j.configuration.GraphDatabaseSettings.ephemeral_lucene;
 
 public class GraphDatabase {
 
@@ -30,10 +29,12 @@ public class GraphDatabase {
         logger.info("Starting embedded neo4j graph database");
 
         String directory = App.config.getConfigValue("dbdirectory");
-        //managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
 
-        managementService = new DatabaseManagementServiceBuilder(new File(directory)).setConfig(ephemeral_lucene, false).build();
+        managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
+
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
+
+        logger.info("Embedded neo4j graph database started");
     }
 
     public void insertNeoStatement(NeoStatement statement) {

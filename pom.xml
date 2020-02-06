@@ -37,11 +37,6 @@
             <artifactId>neo4j</artifactId>
             <version>4.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-slf4j</artifactId>
-            <version>4.0.0</version>
-        </dependency>
 
         <!-- Logger -->
         <dependency>

@@ -56,6 +56,7 @@ public class App {
             database = new GraphDatabase();
         } catch (Exception e) {
             logger.error("An error occurred in graph database", e);
+            return;
         }
 
         httpServer = new HttpServer();
