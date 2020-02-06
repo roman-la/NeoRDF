@@ -73,14 +73,14 @@ public class RestApiTest extends JerseyTest {
     }
 
     @Test
-    public void executeSparqlQueryWithDBTest() {
+    public void executeSparqlQueryTest() {
         String sparqlQuery = "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" +
                 "SELECT ?name\n" +
                 "WHERE { ?x foaf:name ?name . }";
 
         Entity<String> cypherQueryEntity = Entity.entity(sparqlQuery, MediaType.TEXT_PLAIN);
 
-        Response response = target("/rest/sparql").request().post(cypherQueryEntity);
+        Response response = target("/rest/sparql").request().header("format", "table").post(cypherQueryEntity);
 
         Assertions.assertEquals(200, response.getStatus());
 
@@ -91,12 +91,12 @@ public class RestApiTest extends JerseyTest {
     }
 
     @Test
-    public void executeCypherQueryWithDBTest() {
+    public void executeCypherQueryTest() {
         String cypherQuery = "MATCH (n) RETURN n";
 
         Entity<String> cypherQueryEntity = Entity.entity(cypherQuery, MediaType.TEXT_PLAIN);
 
-        Response response = target("/rest/cypher").request().post(cypherQueryEntity);
+        Response response = target("/rest/cypher").request().header("format", "table").post(cypherQueryEntity);
 
         Assertions.assertEquals(200, response.getStatus());
 
@@ -123,5 +123,19 @@ public class RestApiTest extends JerseyTest {
         for (String expectedLine : expectedLines) {
             Assertions.assertTrue(responseString.contains(expectedLine));
         }
+    }
+
+    @Test
+    public void extractRdfTest() {
+        Response response = target("/rest/extractRdf").request(MediaType.TEXT_PLAIN).header("format", "TURTLE").get();
+
+        Assertions.assertEquals(200, response.getStatus());
+
+        String responseString = response.readEntity(String.class);
+
+        String expected = "\n<http://example.org/#roman> a <http://xmlns.com/foaf/0.1/Person>;\n" +
+                "  <http://xmlns.com/foaf/0.1/name> \"Roman L.\" .\n";
+
+        Assertions.assertEquals(expected, responseString);
     }
 }

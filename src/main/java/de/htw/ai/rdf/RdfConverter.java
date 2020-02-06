@@ -5,7 +5,8 @@ import de.htw.ai.models.NeoElement;
 import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
-import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -27,6 +28,37 @@ public class RdfConverter {
             neoStatements.add(rdf4jStatementToNeoStatement(statement));
 
         return neoStatements;
+    }
+
+    public static Statement neoStatementToRdf4jStatement(NeoStatement neoStatement) {
+        ValueFactory factory = SimpleValueFactory.getInstance();
+
+        Resource subject = (Resource) neoElementToRdf4jValue(neoStatement.getSubject());
+        IRI predicate = (IRI) neoElementToRdf4jValue(neoStatement.getPredicate());
+        Value object = neoElementToRdf4jValue(neoStatement.getObject());
+
+        return factory.createStatement(subject, predicate, object);
+    }
+
+    public static Collection<Statement> neoStatementsToRdf4jStatements(Collection<NeoStatement> neoStatements) {
+        Collection<Statement> rdf4jStatements = new LinkedList<>();
+
+        for (NeoStatement neoStatement : neoStatements)
+            rdf4jStatements.add(neoStatementToRdf4jStatement(neoStatement));
+
+        return rdf4jStatements;
+    }
+
+    private static Value neoElementToRdf4jValue(NeoElement neoElement) {
+        ValueFactory factory = SimpleValueFactory.getInstance();
+
+        if (neoElement instanceof NeoIRI) {
+            return factory.createIRI((String) ((NeoIRI) neoElement).getProperties().get("iri"));
+        } else if (neoElement instanceof NeoLiteral) {
+            return factory.createLiteral((String) ((NeoLiteral) neoElement).getValue());
+        }
+
+        return null;
     }
 
     private static NeoElement iriToNeoElement(String iri) {

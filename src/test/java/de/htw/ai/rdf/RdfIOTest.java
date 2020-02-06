@@ -41,7 +41,7 @@ public class RdfIOTest {
 
         Assertions.assertNotNull(statements);
 
-        String rdfString = RdfIO.statementsToString(statements, RDFFormat.TURTLE);
+        String rdfString = RdfIO.statementsToString(statements, "TURTLE");
 
         String expected = "\n<http://example.org/#roman> <http://w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person>;\n" +
                 "  <http://xmlns.com/foaf/0.1/name> \"Roman L.\";\n" +
