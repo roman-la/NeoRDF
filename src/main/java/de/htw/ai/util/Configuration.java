@@ -19,6 +19,7 @@ public class Configuration {
         properties.put("ontologies", System.getProperty("user.dir") + "/ontologies.txt");
         properties.put("dbdirectory", System.getProperty("user.dir") + "/db");
         properties.put("port", "8080");
+        properties.put("loglevel", "info");
 
         defaultConfig = true;
 

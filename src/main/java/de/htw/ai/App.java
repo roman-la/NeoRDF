@@ -35,7 +35,20 @@ public class App {
             config.printHelp();
         }
 
-        loggerContext.getLogger("de.htw.ai").setLevel(Level.INFO);
+        switch (config.getConfigValue("loglevel")) {
+            case "debug":
+                loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.DEBUG);
+                break;
+            case "info":
+                loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.INFO);
+                break;
+            case "warn":
+                loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.WARN);
+                break;
+            case "error":
+                loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.ERROR);
+                break;
+        }
 
         ontologyHandler = new OntologyHandler();
 
