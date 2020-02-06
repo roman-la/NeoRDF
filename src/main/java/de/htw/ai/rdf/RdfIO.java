@@ -32,10 +32,15 @@ public class RdfIO {
         return statementCollector.getStatements();
     }
 
-    public static String statementsToString(Collection<Statement> statements, RDFFormat format) {
+    public static String statementsToString(Collection<Statement> statements, String format) {
+        RDFFormat rdfFormat = resolveRdfFormat(format);
+
+        if (rdfFormat == null)
+            return null;
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        RDFWriter rdfWriter = Rio.createWriter(format, outputStream);
+        RDFWriter rdfWriter = Rio.createWriter(rdfFormat, outputStream);
 
         rdfWriter.startRDF();
 
