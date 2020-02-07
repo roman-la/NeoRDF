@@ -1,7 +1,7 @@
 package de.htw.ai.rdf;
 
 import de.htw.ai.App;
-import de.htw.ai.util.Configuration;
+import de.htw.ai.util.NeoConfiguration;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public class OntologyHandlerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        App.config = new Configuration();
+        App.config = new NeoConfiguration();
         App.config.setConfigValue("ontologies", ontologiesPath);
     }
 

@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class ConfigurationTest {
+public class NeoConfigurationTest {
 
-    Configuration config;
+    NeoConfiguration config;
     String[] testArgs = new String[]{"-config", "src/test/resources/configexample.txt"};
 
     @BeforeEach
     public void beforeEach() {
-        config = new Configuration();
+        config = new NeoConfiguration();
     }
 
     @Test

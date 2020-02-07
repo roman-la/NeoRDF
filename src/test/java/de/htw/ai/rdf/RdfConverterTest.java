@@ -2,7 +2,7 @@ package de.htw.ai.rdf;
 
 import de.htw.ai.App;
 import de.htw.ai.models.*;
-import de.htw.ai.util.Configuration;
+import de.htw.ai.util.NeoConfiguration;
 import org.eclipse.rdf4j.model.Statement;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +20,7 @@ public class RdfConverterTest {
 
     @BeforeAll
     public static void beforeAll() {
-        App.config = new Configuration();
+        App.config = new NeoConfiguration();
         App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
     }
 

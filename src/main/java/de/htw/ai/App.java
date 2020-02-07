@@ -5,7 +5,7 @@ import ch.qos.logback.classic.LoggerContext;
 import de.htw.ai.db.GraphDatabase;
 import de.htw.ai.rdf.OntologyHandler;
 import de.htw.ai.rest.HttpServer;
-import de.htw.ai.util.Configuration;
+import de.htw.ai.util.NeoConfiguration;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class App {
 
-    public static Configuration config;
+    public static NeoConfiguration config;
     public static GraphDatabase database;
     public static OntologyHandler ontologyHandler;
     public static HttpServer httpServer;
@@ -24,7 +24,7 @@ public class App {
     public static void main(String[] args) {
         logger.info("Starting NeoRDF");
 
-        config = new Configuration();
+        config = new NeoConfiguration();
         try {
             config.parse(args);
         } catch (IOException e) {

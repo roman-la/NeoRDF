@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class Configuration {
+public class NeoConfiguration {
 
     public boolean defaultConfig = true;
     private Options options;
     private Properties properties;
 
-    public Configuration() {
+    public NeoConfiguration() {
         properties = new Properties(getDefaultProperties());
 
         options = getOptions();

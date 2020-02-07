@@ -6,7 +6,7 @@ import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
 import de.htw.ai.rdf.OntologyHandler;
-import de.htw.ai.util.Configuration;
+import de.htw.ai.util.NeoConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -35,7 +35,7 @@ public class RestApiTest extends JerseyTest {
         super.setUp(); // junit 5 with JerseyTest
 
         // Setup config, ontologyhandler, graphdb
-        App.config = new Configuration();
+        App.config = new NeoConfiguration();
         App.config.setConfigValue("dbdirectory", "src/test/resources/db");
         App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
         App.ontologyHandler = new OntologyHandler();
