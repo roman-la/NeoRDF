@@ -6,47 +6,82 @@ import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
 import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.LinkedList;
 
 public class RdfConverter {
 
-    public static NeoStatement rdf4jStatementToNeoStatement(Statement rdf4jStatement) {
-        NeoElement subject = iriToNeoElement(rdf4jStatement.getSubject().stringValue());
-        NeoIRI predicate = (NeoIRI) iriToNeoElement(rdf4jStatement.getPredicate().stringValue());
-        NeoElement object = iriToNeoElement(rdf4jStatement.getObject().stringValue());
+    public static Collection<NeoStatement> stringToNeoStatements(String input, String format) throws IOException {
+        RDFFormat rdfFormat = resolveRdfFormat(format);
 
-        return new NeoStatement(subject, predicate, object);
-    }
+        if (rdfFormat == null)
+            throw new IllegalArgumentException("Given format is unknown");
 
-    public static Collection<NeoStatement> rdf4jStatementsToNeoStatements(Collection<Statement> rdf4jStatements) {
+        RDFParser rdfParser = Rio.createParser(rdfFormat);
+
+        StatementCollector statementCollector = new StatementCollector(new LinkedHashModel());
+
+        rdfParser.setRDFHandler(statementCollector);
+
+        rdfParser.parse(new StringReader(input), extractBaseIri(input));
+
+        Collection<Statement> rdf4jStatements = statementCollector.getStatements();
+
         Collection<NeoStatement> neoStatements = new LinkedList<>();
 
-        for (Statement statement : rdf4jStatements)
-            neoStatements.add(rdf4jStatementToNeoStatement(statement));
+        for (Statement rdf4jStatement : rdf4jStatements) {
+            NeoElement subject = iriToNeoElement(rdf4jStatement.getSubject().stringValue());
+            NeoIRI predicate = (NeoIRI) iriToNeoElement(rdf4jStatement.getPredicate().stringValue());
+            NeoElement object = iriToNeoElement(rdf4jStatement.getObject().stringValue());
+
+            neoStatements.add(new NeoStatement(subject, predicate, object));
+        }
 
         return neoStatements;
     }
 
-    public static Statement neoStatementToRdf4jStatement(NeoStatement neoStatement) {
-        ValueFactory factory = SimpleValueFactory.getInstance();
+    public static String neoStatementsToString(Collection<NeoStatement> neoStatements, String format) {
+        RDFFormat rdfFormat = resolveRdfFormat(format);
 
-        Resource subject = (Resource) neoElementToRdf4jValue(neoStatement.getSubject());
-        IRI predicate = (IRI) neoElementToRdf4jValue(neoStatement.getPredicate());
-        Value object = neoElementToRdf4jValue(neoStatement.getObject());
+        if (rdfFormat == null)
+            throw new IllegalArgumentException("Given format is unknown");
 
-        return factory.createStatement(subject, predicate, object);
-    }
-
-    public static Collection<Statement> neoStatementsToRdf4jStatements(Collection<NeoStatement> neoStatements) {
         Collection<Statement> rdf4jStatements = new LinkedList<>();
 
-        for (NeoStatement neoStatement : neoStatements)
-            rdf4jStatements.add(neoStatementToRdf4jStatement(neoStatement));
+        for (NeoStatement neoStatement : neoStatements) {
+            ValueFactory factory = SimpleValueFactory.getInstance();
 
-        return rdf4jStatements;
+            Resource subject = (Resource) neoElementToRdf4jValue(neoStatement.getSubject());
+            IRI predicate = (IRI) neoElementToRdf4jValue(neoStatement.getPredicate());
+            Value object = neoElementToRdf4jValue(neoStatement.getObject());
+
+            rdf4jStatements.add(factory.createStatement(subject, predicate, object));
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        RDFWriter rdfWriter = Rio.createWriter(rdfFormat, outputStream);
+
+        rdfWriter.startRDF();
+
+        for (Statement statement : rdf4jStatements) {
+            rdfWriter.handleStatement(statement);
+        }
+
+        rdfWriter.endRDF();
+
+        return outputStream.toString();
     }
 
     private static Value neoElementToRdf4jValue(NeoElement neoElement) {
@@ -76,6 +111,14 @@ public class RdfConverter {
             return new NeoLiteral(iri);
     }
 
+    private static String extractBaseIri(String input) {
+        for (String line : input.split("\\r?\\n"))
+            if (line.startsWith("@base") || line.startsWith("BASE"))
+                return line.split(" ")[1];
+
+        return "";
+    }
+
     private static String resolveNamespace(String namespace) {
         String namespaceAbbreviation = App.ontologyHandler.getOntologyKey(namespace);
 
@@ -83,5 +126,32 @@ public class RdfConverter {
             return namespaceAbbreviation;
 
         return App.ontologyHandler.addOntology(namespace);
+    }
+
+    private static RDFFormat resolveRdfFormat(String format) {
+        switch (format) {
+            case "BINARY":
+                return RDFFormat.BINARY;
+            case "JSONLD":
+                return RDFFormat.JSONLD;
+            case "N3":
+                return RDFFormat.N3;
+            case "NQUADS":
+                return RDFFormat.NQUADS;
+            case "NTRIPLES":
+                return RDFFormat.NTRIPLES;
+            case "RDFJSON":
+                return RDFFormat.RDFJSON;
+            case "RDFXML":
+                return RDFFormat.RDFXML;
+            case "TRIG":
+                return RDFFormat.TRIG;
+            case "TRIX":
+                return RDFFormat.TRIX;
+            case "TURTLE":
+                return RDFFormat.TURTLE;
+        }
+
+        return null;
     }
 }
