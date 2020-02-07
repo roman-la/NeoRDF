@@ -9,40 +9,28 @@ import java.util.Properties;
 
 public class Configuration {
 
-    public boolean defaultConfig;
+    public boolean defaultConfig = true;
     private Options options;
     private Properties properties;
 
     public Configuration() {
-        properties = new Properties();
+        properties = new Properties(getDefaultProperties());
 
-        properties.put("ontologies", System.getProperty("user.dir") + "/ontologies.txt");
-        properties.put("dbdirectory", System.getProperty("user.dir") + "/db");
-        properties.put("port", "8080");
-        properties.put("loglevel", "info");
-
-        defaultConfig = true;
-
-        options = new Options();
-
-        options.addOption(Option.builder("config")
-                .required(false)
-                .hasArg(true)
-                .numberOfArgs(1)
-                .optionalArg(false)
-                .desc("Path to config file")
-                .build());
+        options = getOptions();
     }
 
-    public void parse(String[] args) throws ParseException, IOException {
+    public void parse(String[] args) throws IOException, ParseException {
         CommandLine commandLine = new DefaultParser().parse(options, args);
 
-        if (commandLine.hasOption("config"))
-            try (InputStream in = new FileInputStream(commandLine.getOptionValue("config"))) {
-                properties.load(in);
+        if (commandLine.hasOption("config")) {
+            InputStream inputStream = new FileInputStream(commandLine.getOptionValue("config"));
 
-                defaultConfig = false;
-            }
+            properties.load(inputStream);
+
+            inputStream.close();
+
+            defaultConfig = false;
+        }
     }
 
     public String getConfigValue(String key) {
@@ -55,5 +43,30 @@ public class Configuration {
 
     public void printHelp() {
         new HelpFormatter().printHelp("NeoRDF", options);
+    }
+
+    private Properties getDefaultProperties() {
+        Properties defaultProperties = new Properties();
+
+        defaultProperties.put("ontologies", System.getProperty("user.dir") + "ontologies.txt");
+        defaultProperties.put("dbdir", System.getProperty("user.dir") + "/db");
+        defaultProperties.put("port", "8080");
+        defaultProperties.put("loglevel", "info");
+
+        return defaultProperties;
+    }
+
+    private Options getOptions() {
+        Options options = new Options();
+
+        options.addOption(Option.builder("config")
+                .required(false)
+                .hasArg(true)
+                .numberOfArgs(1)
+                .optionalArg(false)
+                .desc("Path to config file")
+                .build());
+
+        return options;
     }
 }

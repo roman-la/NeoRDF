@@ -25,14 +25,15 @@ public class App {
         logger.info("Starting NeoRDF");
 
         config = new Configuration();
-
         try {
             config.parse(args);
         } catch (IOException e) {
-            logger.error("An error occurred while parsing configuration", e);
+            logger.error("An error occurred while reading configuration file", e);
             return;
         } catch (ParseException e) {
+            logger.error("An error occurred while parsing command line arguments", e);
             config.printHelp();
+            return;
         }
 
         switch (config.getConfigValue("loglevel")) {
