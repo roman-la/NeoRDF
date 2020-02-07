@@ -3,6 +3,7 @@ package de.htw.ai.rdf;
 import de.htw.ai.App;
 import de.htw.ai.models.*;
 import de.htw.ai.util.NeoConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,18 @@ import java.util.LinkedList;
 
 public class RdfConverterTest {
 
+    private static String ontologiesFilePath = new File("src/test/resources/tempontologies.txt").getAbsolutePath();
+
     @BeforeAll
     public static void beforeAll() {
         App.config = new NeoConfiguration();
+        App.config.setConfigValue("ontologies", ontologiesFilePath);
         App.ontologyHandler = new OntologyHandler();
+    }
+
+    @AfterAll
+    public static void afterAll() throws IOException {
+        Files.delete(Paths.get(ontologiesFilePath));
     }
 
     @Test
