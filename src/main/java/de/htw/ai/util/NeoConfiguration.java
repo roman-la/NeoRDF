@@ -9,7 +9,6 @@ import java.util.Properties;
 
 public class NeoConfiguration {
 
-    public boolean defaultConfig = true;
     private Options options;
     private Properties properties;
 
@@ -28,8 +27,6 @@ public class NeoConfiguration {
             properties.load(inputStream);
 
             inputStream.close();
-
-            defaultConfig = false;
         }
     }
 
