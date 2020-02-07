@@ -26,6 +26,7 @@ public class GraphDatabaseTest {
     @BeforeEach
     public void beforeEach() {
         db = new GraphDatabase();
+        db.start();
     }
 
     @AfterEach
@@ -74,7 +75,15 @@ public class GraphDatabaseTest {
 
         db.shutdown();
 
+        db.start();
+
+        Assertions.assertTrue(db.executeQuery("MATCH (n) RETURN n;").resultAsString().contains("2 rows"));
+
+        db.shutdown();
+
         db = new GraphDatabase();
+
+        db.start();
 
         Assertions.assertTrue(db.executeQuery("MATCH (n) RETURN n;").resultAsString().contains("2 rows"));
     }

@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.*;
 
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
+import static org.neo4j.configuration.GraphDatabaseSettings.SERVER_DEFAULTS;
 
 public class GraphDatabase {
 
@@ -22,12 +23,12 @@ public class GraphDatabase {
     private GraphDatabaseService databaseService;
     private static Logger logger = LoggerFactory.getLogger(GraphDatabase.class);
 
-    public GraphDatabase() {
+    public void start() {
         logger.info("Starting embedded neo4j graph database");
 
         String directory = App.config.getConfigValue("dbdirectory");
 
-        managementService = new DatabaseManagementServiceBuilder(new File(directory)).build();
+        managementService = new DatabaseManagementServiceBuilder(new File(directory)).setConfig(SERVER_DEFAULTS).build();
 
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
 

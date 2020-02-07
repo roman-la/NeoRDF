@@ -52,8 +52,9 @@ public class App {
 
         ontologyHandler = new OntologyHandler();
 
+        database = new GraphDatabase();
         try {
-            database = new GraphDatabase();
+            database.start();
         } catch (Exception e) {
             logger.error("An error occurred in graph database", e);
             return;
@@ -73,7 +74,9 @@ public class App {
     private static void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Shutting down NeoRDF");
+
             database.shutdown();
+
             httpServer.stop();
 
             loggerContext.stop();

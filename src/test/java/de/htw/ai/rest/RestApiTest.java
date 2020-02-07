@@ -40,6 +40,7 @@ public class RestApiTest extends JerseyTest {
         App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
         App.ontologyHandler = new OntologyHandler();
         App.database = new GraphDatabase();
+        App.database.start();
 
         // Add some data to db
         App.database.insertNeoStatement(new NeoStatement(
