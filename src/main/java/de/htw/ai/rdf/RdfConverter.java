@@ -98,8 +98,15 @@ public class RdfConverter {
 
     private static NeoElement iriToNeoElement(String iri) {
         if (iri.contains("/")) {
-            String namespace = iri.substring(0, iri.lastIndexOf("/") + 1);
+
+            String namespace;
+            if (iri.lastIndexOf("/") > iri.lastIndexOf("#"))
+                namespace = iri.substring(0, iri.lastIndexOf("/") + 1);
+            else
+                namespace = iri.substring(0, iri.lastIndexOf("#") + 1);
+
             String ns = resolveNamespace(namespace);
+
             return new NeoIRI(iri, ns, namespace);
         }
 
