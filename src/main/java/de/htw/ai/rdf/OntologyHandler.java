@@ -40,17 +40,13 @@ public class OntologyHandler {
         return null;
     }
 
-    public String addOntology(String abbreviation, String namespace) {
+    public void addOntology(String abbreviation, String namespace) {
         if (!ontologies.containsKey(abbreviation)) {
             ontologies.put(abbreviation, namespace);
 
             persistOntology(abbreviation, namespace);
-
-            return abbreviation;
-        } else if (ontologies.get(abbreviation).equals(namespace))
-            return abbreviation;
-        else
-            return addOntology(namespace);
+        } else if (!ontologies.get(abbreviation).equals(namespace))
+            addOntology(namespace);
     }
 
     public String addOntology(String namespace) {
@@ -80,8 +76,9 @@ public class OntologyHandler {
         String toPersist = System.lineSeparator() + abbreviation + " " + namespace;
 
         try {
-            Files.write(Paths.get(App.config.getConfigValue("ontologies")), toPersist.getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(App.config.getConfigValue("ontologies")), toPersist.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
+            logger.error("Could not persist ontology.", e);
             e.printStackTrace();
         }
     }
