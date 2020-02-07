@@ -128,7 +128,7 @@ public class RestApiTest extends JerseyTest {
 
     @Test
     public void extractRdfTest() {
-        Response response = target("/rest/extractRdf").request(MediaType.TEXT_PLAIN).header("format", "TURTLE").get();
+        Response response = target("/rest/rdf").request(MediaType.TEXT_PLAIN).header("format", "TURTLE").get();
 
         Assertions.assertEquals(200, response.getStatus());
 

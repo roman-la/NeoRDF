@@ -48,7 +48,7 @@ public class NeoConfiguration {
     private Properties getDefaultProperties() {
         Properties defaultProperties = new Properties();
 
-        defaultProperties.put("ontologies", System.getProperty("user.dir") + "ontologies.txt");
+        defaultProperties.put("ontologies", System.getProperty("user.dir") + "/ontologies.txt");
         defaultProperties.put("dbdir", System.getProperty("user.dir") + "/db");
         defaultProperties.put("port", "8080");
         defaultProperties.put("loglevel", "info");
