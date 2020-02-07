@@ -34,7 +34,7 @@ public class RestApi {
         if (headers.getHeaderString("format") == null)
             return Response.status(Response.Status.BAD_REQUEST).entity("No format given.").build();
 
-        if (!Arrays.stream(validSyntax).anyMatch(o -> o.equals(headers.getHeaderString("format"))))
+        if (Arrays.stream(validSyntax).noneMatch(o -> o.equals(headers.getHeaderString("format"))))
             return Response.status(Response.Status.BAD_REQUEST).entity("Unknown format given.").build();
 
         Collection<NeoStatement> neoStatements = App.database.extractNeoStatements("MATCH (s)-[p]->(o) RETURN s, p, o;");
