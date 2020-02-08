@@ -49,6 +49,8 @@ public class App {
             case "error":
                 loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.ERROR);
                 break;
+            default:
+                logger.error("Unknown log level");
         }
 
         ontologyHandler = new OntologyHandler();
