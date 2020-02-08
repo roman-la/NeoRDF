@@ -26,7 +26,7 @@ public class GraphDatabase {
     public void start() {
         logger.info("Starting embedded neo4j graph database");
 
-        String directory = App.config.getConfigValue("dbdirectory");
+        String directory = App.config.getConfigValue("dbdir");
 
         managementService = new DatabaseManagementServiceBuilder(new File(directory)).setConfig(SERVER_DEFAULTS).build();
 
