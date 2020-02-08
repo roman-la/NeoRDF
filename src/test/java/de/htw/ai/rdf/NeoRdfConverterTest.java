@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class RdfConverterTest {
+public class NeoRdfConverterTest {
 
     private static String ontologiesFilePath = new File("src/test/resources/tempontologies.txt").getAbsolutePath();
 
@@ -35,7 +35,7 @@ public class RdfConverterTest {
     public void stringToNeoStatementsTest() throws IOException {
         String rdfString = Files.readString(Paths.get(new File("src/test/resources/rdfexample.txt").getAbsolutePath()));
 
-        Collection<NeoStatement> neoStatements = RdfConverter.stringToNeoStatements(rdfString, "TURTLE");
+        Collection<NeoStatement> neoStatements = NeoRdfConverter.stringToNeoStatements(rdfString, "TURTLE");
 
         Assertions.assertNotNull(neoStatements);
 
@@ -55,7 +55,7 @@ public class RdfConverterTest {
                     new NeoLiteral("Roman L.")));
         }};
 
-        String rdfData = RdfConverter.neoStatementsToString(neoStatements, "TURTLE");
+        String rdfData = NeoRdfConverter.neoStatementsToString(neoStatements, "TURTLE");
 
         Assertions.assertNotNull(rdfData);
 

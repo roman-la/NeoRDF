@@ -20,7 +20,7 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class RdfConverter {
+public class NeoRdfConverter {
 
     public static Collection<NeoStatement> stringToNeoStatements(String input, String format) throws IOException {
         RDFFormat rdfFormat = resolveRdfFormat(format);

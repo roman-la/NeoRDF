@@ -2,7 +2,7 @@ package de.htw.ai.rest;
 
 import de.htw.ai.App;
 import de.htw.ai.models.NeoStatement;
-import de.htw.ai.rdf.RdfConverter;
+import de.htw.ai.rdf.NeoRdfConverter;
 import de.htw.ai.rdf.SparqlConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class RestApi {
 
         String queryResult;
         try {
-            queryResult = RdfConverter.neoStatementsToString(neoStatements, headers.getHeaderString("format"));
+            queryResult = NeoRdfConverter.neoStatementsToString(neoStatements, headers.getHeaderString("format"));
         } catch (IllegalArgumentException ie) {
             logger.error("", ie);
             return Response.status(Response.Status.BAD_REQUEST).entity("Unknown format given.").build();
@@ -110,7 +110,7 @@ public class RestApi {
 
         Collection<NeoStatement> neoStatements;
         try {
-            neoStatements = RdfConverter.stringToNeoStatements(rdfData, headers.getHeaderString("format"));
+            neoStatements = NeoRdfConverter.stringToNeoStatements(rdfData, headers.getHeaderString("format"));
         } catch (IllegalArgumentException ie) {
             logger.error("", ie);
             return Response.status(Response.Status.BAD_REQUEST).entity("Unknown format given.").build();
