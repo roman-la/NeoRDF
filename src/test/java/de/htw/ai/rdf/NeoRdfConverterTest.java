@@ -59,9 +59,9 @@ public class NeoRdfConverterTest {
 
         Assertions.assertNotNull(rdfData);
 
-        String expected = "\n<http://example.org/#roman> <http://example.org/name> \"Roman L.\";\n" +
-                "  <http://example.org/type> <http://example.org/Person> .\n";
+        String expected = "<http://example.org/#roman> <http://example.org/name> \"Roman L.\";\n" +
+                "  <http://example.org/type> <http://example.org/Person> .";
 
-        Assertions.assertEquals(expected, rdfData);
+        Assertions.assertTrue(rdfData.contains(expected));
     }
 }

@@ -134,9 +134,9 @@ public class RestApiTest extends JerseyTest {
 
         String responseString = response.readEntity(String.class);
 
-        String expected = "\n<http://example.org/#roman> a <http://xmlns.com/foaf/0.1/Person>;\n" +
-                "  <http://xmlns.com/foaf/0.1/name> \"Roman L.\" .\n";
+        String expected = "<http://example.org/#roman> a <http://xmlns.com/foaf/0.1/Person>;\n" +
+                "  <http://xmlns.com/foaf/0.1/name> \"Roman L.\" .";
 
-        Assertions.assertEquals(expected, responseString);
+        Assertions.assertTrue(responseString.contains(expected));
     }
 }
