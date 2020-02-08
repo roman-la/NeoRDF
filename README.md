@@ -1,11 +1,16 @@
-Compile:
+Test:
 ```
-mvn package
+mvn test
 ```
 
- Run (unix, Windows CMD):
+Compile:
 ```
-mvn exec:java -Dexec.mainClass=de.htw.ai.App
+mvn compile
+```
+
+Run (unix, Windows CMD):
+```
+mvn exec:java -Dexec.mainClass=de.htw.ai.App -Dexec.args="-config /path/config.txt"
 ```
 
  Run (Windows PowerShell):
