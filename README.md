@@ -10,10 +10,10 @@ mvn compile
 
 Run (unix, Windows CMD):
 ```
-mvn exec:java -Dexec.mainClass=de.htw.ai.App -Dexec.args="-config /path/config.txt"
+mvn exec:java -Dexec.args="-config /path/config.txt"
 ```
 
- Run (Windows PowerShell):
+Run (Windows PowerShell):
 ```
-mvn exec:java "-Dexec.mainClass=de.htw.ai.App"
+mvn exec:java "-Dexec.args='-config /path/config.txt'"
 ```
