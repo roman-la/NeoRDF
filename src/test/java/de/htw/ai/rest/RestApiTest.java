@@ -36,7 +36,7 @@ public class RestApiTest extends JerseyTest {
 
         // Setup config, ontologyhandler, graphdb
         App.config = new NeoConfiguration();
-        App.config.setConfigValue("dbdirectory", "src/test/resources/db");
+        App.config.setConfigValue("dbdir", "src/test/resources/db");
         App.config.setConfigValue("ontologies", new File("src/test/resources/ontologiesexample.txt").getAbsolutePath());
         App.ontologyHandler = new OntologyHandler();
         App.database = new GraphDatabase();
@@ -86,6 +86,8 @@ public class RestApiTest extends JerseyTest {
         Assertions.assertEquals(200, response.getStatus());
 
         String responseString = response.readEntity(String.class);
+
+        System.out.println(responseString);
 
         Assertions.assertTrue(responseString.contains("value:\"Roman L.\""));
         Assertions.assertTrue(responseString.contains("1 row"));

@@ -20,7 +20,7 @@ public class GraphDatabaseTest {
     @BeforeAll
     public static void beforeAll() {
         App.config = new NeoConfiguration();
-        App.config.setConfigValue("dbdirectory", "src/test/resources/db");
+        App.config.setConfigValue("dbdir", "src/test/resources/db");
     }
 
     @BeforeEach
