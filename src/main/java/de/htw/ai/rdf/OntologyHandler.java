@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -70,7 +71,14 @@ public class OntologyHandler {
     }
 
     private void loadOntologies() throws IOException {
-        InputStream inputStream = new FileInputStream(App.config.getConfigValue("ontologies"));
+        InputStream inputStream;
+
+        try {
+            inputStream = new FileInputStream(App.config.getConfigValue("ontologies"));
+        } catch (FileNotFoundException e) {
+            logger.info("Could not find ontology file, it might have not been created.");
+            return;
+        }
 
         String ontologiesFile = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
