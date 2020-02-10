@@ -6,7 +6,7 @@ import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
 import de.htw.ai.rdf.OntologyHandler;
-import de.htw.ai.util.NeoConfiguration;
+import de.htw.ai.config.NeoConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;

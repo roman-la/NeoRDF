@@ -4,7 +4,7 @@ import de.htw.ai.App;
 import de.htw.ai.models.NeoIRI;
 import de.htw.ai.models.NeoLiteral;
 import de.htw.ai.models.NeoStatement;
-import de.htw.ai.util.NeoConfiguration;
+import de.htw.ai.config.NeoConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 import org.neo4j.graphdb.Result;

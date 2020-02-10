@@ -2,7 +2,7 @@ package de.htw.ai.rdf;
 
 import de.htw.ai.App;
 import de.htw.ai.models.*;
-import de.htw.ai.util.NeoConfiguration;
+import de.htw.ai.config.NeoConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

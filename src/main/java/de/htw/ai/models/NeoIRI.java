@@ -3,6 +3,9 @@ package de.htw.ai.models;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Representation of a RDF IRI
+ */
 public class NeoIRI implements NeoElement {
     private String iri;
     private String ns;

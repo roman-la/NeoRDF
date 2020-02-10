@@ -1,5 +1,8 @@
 package de.htw.ai.models;
 
+/**
+ * Representation of a RDF Literal
+ */
 public class NeoLiteral implements NeoElement {
     private Object value;
 

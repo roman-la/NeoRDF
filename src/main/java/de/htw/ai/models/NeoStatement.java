@@ -1,5 +1,8 @@
 package de.htw.ai.models;
 
+/**
+ * Representation of a RDF Statement
+ */
 public class NeoStatement {
     private NeoElement subject;
     private NeoIRI predicate;

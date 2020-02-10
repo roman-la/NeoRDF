@@ -11,11 +11,17 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Collection;
 
+/**
+ * Class containing rest api
+ */
 @Path("/rest")
 public class RestApi {
 
     private static Logger logger = LoggerFactory.getLogger(RestApi.class);
 
+    /**
+     * Returns all known ontologies
+     */
     @GET
     @Path("/ontologies")
     @Produces(MediaType.TEXT_PLAIN)
@@ -23,6 +29,9 @@ public class RestApi {
         return Response.status(Response.Status.OK).entity(App.ontologyHandler.ontologiesToString()).build();
     }
 
+    /**
+     * Returns full rdf-graph in given format
+     */
     @GET
     @Path("/rdf")
     @Produces(MediaType.TEXT_PLAIN)
@@ -52,6 +61,9 @@ public class RestApi {
         return Response.status(Response.Status.OK).entity(queryResult).build();
     }
 
+    /**
+     * Executes a cypher query and returns result as string table
+     */
     @POST
     @Path("/cypher")
     @Consumes(MediaType.TEXT_PLAIN)
@@ -71,6 +83,9 @@ public class RestApi {
         return Response.status(Response.Status.OK).entity(queryResult).build();
     }
 
+    /**
+     * Executes a sparql query and returns result as string table
+     */
     @POST
     @Path("/sparql")
     @Consumes(MediaType.TEXT_PLAIN)
@@ -97,6 +112,9 @@ public class RestApi {
         return Response.status(Response.Status.OK).entity(queryResult).build();
     }
 
+    /**
+     * Takes given rdf data and inserts it into database
+     */
     @POST
     @Path("/rdf")
     @Consumes(MediaType.TEXT_PLAIN)

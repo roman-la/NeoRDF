@@ -17,12 +17,18 @@ import java.util.*;
 import static org.neo4j.configuration.GraphDatabaseSettings.DEFAULT_DATABASE_NAME;
 import static org.neo4j.configuration.GraphDatabaseSettings.SERVER_DEFAULTS;
 
+/**
+ * Class for the integrated Neo4j graph database
+ */
 public class GraphDatabase {
 
     private DatabaseManagementService managementService;
     private GraphDatabaseService databaseService;
     private static Logger logger = LoggerFactory.getLogger(GraphDatabase.class);
 
+    /**
+     * Setup and start the database
+     */
     public void start() {
         logger.info("Starting embedded neo4j graph database");
 
@@ -32,9 +38,19 @@ public class GraphDatabase {
 
         databaseService = managementService.database(DEFAULT_DATABASE_NAME);
 
-        logger.info("Embedded neo4j graph database started");
+        registerShutdownHook(managementService);
     }
 
+    /**
+     * Executes a query on the database
+     */
+    public Result executeQuery(String query) {
+        return databaseService.beginTx().execute(query);
+    }
+
+    /**
+     * Insert a NeoStatement object into the database
+     */
     public void insertNeoStatement(NeoStatement statement) {
         try (Transaction tx = databaseService.beginTx()) {
             Node subjectNode = mergeNeoElementAsNode(statement.getSubject(), tx);
@@ -51,6 +67,9 @@ public class GraphDatabase {
             insertNeoStatement(statement);
     }
 
+    /**
+     * For the given query, returns a Collection of NeoStatements as result
+     */
     public Collection<NeoStatement> extractNeoStatements(String query) {
         Collection<NeoStatement> neoStatements = new LinkedList<>();
 
@@ -62,6 +81,8 @@ public class GraphDatabase {
             NeoElement object = null;
 
             for (Map.Entry<String, Object> row : r.next().entrySet()) {
+
+                // split by column key
                 switch (row.getKey()) {
                     case "s":
                         subject = entityToNeoElement((Entity) row.getValue());
@@ -91,7 +112,7 @@ public class GraphDatabase {
         } else if (nodeProperties.containsKey("value")) {
             element = new NeoLiteral(nodeProperties.get("value"));
         } else
-            return null;
+            throw new IllegalArgumentException();
 
         return element;
     }
@@ -105,17 +126,20 @@ public class GraphDatabase {
             properties = ((NeoIRI) element).getProperties();
         } else if (element instanceof NeoLiteral) {
             query = "MERGE (n:literal {value: $value}) RETURN n";
-            properties = new HashMap<String, Object>() {{
+            properties = new HashMap<>() {{
                 put("value", ((NeoLiteral) element).getValue());
             }};
         } else
-            return null;
+            throw new IllegalArgumentException();
 
         ResourceIterator<Node> resourceIterator = tx.execute(query, properties).columnAs("n");
 
         return resourceIterator.next();
     }
 
+    /**
+     * Creates a relationship between the given Nodes
+     */
     private void mergeNeoIriRelationship(Node subjectNode, NeoIRI neoRelationship, Node objectNode) {
         Relationship relationship = subjectNode.createRelationshipTo(objectNode, RelationshipType.withName("predicate"));
 
@@ -123,13 +147,13 @@ public class GraphDatabase {
             relationship.setProperty(entry.getKey(), entry.getValue());
     }
 
-    public Result executeQuery(String query) {
-        return databaseService.beginTx().execute(query);
-    }
-
     public void shutdown() {
         logger.info("Stopping embedded neo4j graph database");
 
         managementService.shutdown();
+    }
+
+    private static void registerShutdownHook(final DatabaseManagementService managementService) {
+        Runtime.getRuntime().addShutdownHook(new Thread(managementService::shutdown));
     }
 }

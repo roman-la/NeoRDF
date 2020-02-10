@@ -8,6 +8,9 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Class containing the integrated jetty http server
+ */
 public class HttpServer {
 
     private Server jettyHttpServer;
@@ -24,7 +27,7 @@ public class HttpServer {
 
         ServletHolder jerseyServlet = contextHandler.addServlet(ServletContainer.class, "/*");
 
-        jerseyServlet.setInitOrder(0); // maybe not needed, keep if problems occur
+        jerseyServlet.setInitOrder(0);
 
         jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", RestApi.class.getCanonicalName());
     }

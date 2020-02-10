@@ -5,7 +5,7 @@ import ch.qos.logback.classic.LoggerContext;
 import de.htw.ai.db.GraphDatabase;
 import de.htw.ai.rdf.OntologyHandler;
 import de.htw.ai.rest.HttpServer;
-import de.htw.ai.util.NeoConfiguration;
+import de.htw.ai.config.NeoConfiguration;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,16 @@ public class App {
     private static Logger logger = LoggerFactory.getLogger(App.class);
     private static LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
+    /**
+     * Main method of the NeoRDF program.
+     * It hands over the args for configuration and starts all services.
+     *
+     * @param args May contain the path to a config file
+     */
     public static void main(String[] args) {
         logger.info("Starting NeoRDF");
 
+        // Setup configuration
         config = new NeoConfiguration();
         try {
             config.parse(args);
@@ -36,6 +43,7 @@ public class App {
             return;
         }
 
+        // Set logger level
         switch (config.getConfigValue("loglevel")) {
             case "debug":
                 loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.DEBUG);
@@ -55,6 +63,7 @@ public class App {
 
         ontologyHandler = new OntologyHandler();
 
+        // Start graph database
         database = new GraphDatabase();
         try {
             database.start();
@@ -63,6 +72,7 @@ public class App {
             return;
         }
 
+        // Start http server
         httpServer = new HttpServer();
         try {
             httpServer.start();

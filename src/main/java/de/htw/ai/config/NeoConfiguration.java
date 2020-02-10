@@ -1,4 +1,4 @@
-package de.htw.ai.util;
+package de.htw.ai.config;
 
 import org.apache.commons.cli.*;
 

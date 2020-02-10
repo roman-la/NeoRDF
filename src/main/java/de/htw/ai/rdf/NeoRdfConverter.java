@@ -20,13 +20,16 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * Class for converting RDF data
+ */
 public class NeoRdfConverter {
 
+    /**
+     * Will convert a RDF string and format into Collection of NeoStatements
+     */
     public static Collection<NeoStatement> stringToNeoStatements(String input, String format) throws IOException {
         RDFFormat rdfFormat = resolveRdfFormat(format);
-
-        if (rdfFormat == null)
-            throw new IllegalArgumentException("Given format is unknown");
 
         RDFParser rdfParser = Rio.createParser(rdfFormat);
 
@@ -51,11 +54,11 @@ public class NeoRdfConverter {
         return neoStatements;
     }
 
+    /**
+     * Will convert a Collection of NeoStatements into a String
+     */
     public static String neoStatementsToString(Collection<NeoStatement> neoStatements, String format) {
         RDFFormat rdfFormat = resolveRdfFormat(format);
-
-        if (rdfFormat == null)
-            throw new IllegalArgumentException("Given format is unknown");
 
         Collection<Statement> rdf4jStatements = new LinkedList<>();
 
@@ -100,6 +103,9 @@ public class NeoRdfConverter {
         if (iri.contains("/")) {
 
             String namespace;
+
+            // Well known ontologies end on / or #
+            // So splitting here on the last index of one of them
             if (iri.lastIndexOf("/") > iri.lastIndexOf("#"))
                 namespace = iri.substring(0, iri.lastIndexOf("/") + 1);
             else
@@ -110,6 +116,7 @@ public class NeoRdfConverter {
             return new NeoIRI(iri, ns, namespace);
         }
 
+        // Dirty parsing Strings to int or double because data types got lost
         if (iri.matches("-?\\d+"))
             return new NeoLiteral(Integer.parseInt(iri));
         else if (iri.matches("-?\\d+\\.\\d+"))
@@ -126,6 +133,9 @@ public class NeoRdfConverter {
         return "";
     }
 
+    /**
+     * Making sure an ontology abbreviation is unique
+     */
     private static String resolveNamespace(String namespace) {
         String namespaceAbbreviation = App.ontologyHandler.getOntologyKey(namespace);
 
@@ -135,8 +145,11 @@ public class NeoRdfConverter {
         return App.ontologyHandler.addOntology(namespace);
     }
 
+    /**
+     * Checks for valid rdf syntax
+     */
     private static RDFFormat resolveRdfFormat(String format) {
-        switch (format) {
+        switch (format.toUpperCase()) {
             case "BINARY":
                 return RDFFormat.BINARY;
             case "JSONLD":
@@ -159,6 +172,6 @@ public class NeoRdfConverter {
                 return RDFFormat.TURTLE;
         }
 
-        return null;
+        throw new IllegalArgumentException("Given format is unknown");
     }
 }

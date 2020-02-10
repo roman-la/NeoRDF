@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Manages known ontologies
+ */
 public class OntologyHandler {
 
     private Map<String, String> ontologies;
@@ -49,6 +52,9 @@ public class OntologyHandler {
             addOntology(namespace);
     }
 
+    /**
+     * Will generate a random four digit abbreviation String for given ontology
+     */
     public String addOntology(String namespace) {
         String randomAbbreviation;
 
@@ -79,7 +85,6 @@ public class OntologyHandler {
             Files.write(Paths.get(App.config.getConfigValue("ontologies")), toPersist.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             logger.error("Could not persist ontology.", e);
-            e.printStackTrace();
         }
     }
 
