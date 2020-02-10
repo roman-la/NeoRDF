@@ -80,19 +80,5 @@ public class App {
             logger.error("An error occurred in web server", e);
             return;
         }
-
-        registerShutdownHook();
-    }
-
-    private static void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.info("Shutting down NeoRDF");
-
-            database.shutdown();
-
-            httpServer.stop();
-
-            loggerContext.stop();
-        }));
     }
 }
